@@ -284,6 +284,59 @@
       color: var(--seafoam-deep);
     }
 
+    .countdown-wrap {
+      margin-top: 1.75rem;
+      padding-top: 1.35rem;
+      border-top: 1px dashed var(--rule);
+    }
+
+    .countdown-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(0.58rem, 2vw, 0.65rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sepia-muted);
+      margin-bottom: 0.85rem;
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(0.35rem, 2vw, 0.65rem);
+    }
+
+    .countdown-unit {
+      border: 1px solid var(--rule);
+      background: #fff;
+      padding: 0.65rem 0.35rem;
+      text-align: center;
+    }
+
+    .countdown-num {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(1.25rem, 5vw, 1.85rem);
+      font-weight: 500;
+      color: var(--seafoam-deep);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-name {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(0.48rem, 1.8vw, 0.55rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sepia-muted);
+      margin-top: 0.35rem;
+    }
+
+    .countdown-done {
+      font-size: clamp(1.1rem, 4vw, 1.35rem);
+      font-style: italic;
+      color: var(--seafoam-deep);
+      font-weight: 600;
+    }
+
     /* ── Slide 2: Liner notes stats ── */
     .stat-pair {
       display: grid;
@@ -646,6 +699,15 @@
         <h1>Our Year in Words 🤍</h1>
         <p class="slide-sub">A 1-Year Chatography Log</p>
         <p class="dates">SEP 08, 2025 → JUN 11, 2026</p>
+        <div class="countdown-wrap" id="countdownWrap" aria-live="polite">
+          <p class="countdown-label">Until our 1-year · Sep 28, 2026</p>
+          <div class="countdown" id="countdown">
+            <div class="countdown-unit"><div class="countdown-num" id="cdDays">—</div><div class="countdown-name">Days</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cdHours">—</div><div class="countdown-name">Hrs</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cdMins">—</div><div class="countdown-name">Min</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cdSecs">—</div><div class="countdown-name">Sec</div></div>
+          </div>
+        </div>
       </div>
       <span class="scroll-hint">Scroll</span>
     </section>
@@ -751,7 +813,7 @@
             <p>Received. She'll find it here. 🤍</p>
           </div>
         </div>
-        <p class="encore-note">Powered by Pageclip · Sep 08, 2025 — Jun 11, 2026</p>
+        <p class="encore-note">MsMadison · GitHub Pages · Sep 28, 2026 🤍</p>
       </div>
     </section>
 
@@ -817,6 +879,35 @@
       document.querySelector(".pageclip-form").addEventListener("pageclip-submit", function () {
         document.getElementById("formSuccess").classList.add("visible");
       });
+
+      const ANNIVERSARY = new Date("2026-09-28T00:00:00");
+      const cdDays = document.getElementById("cdDays");
+      const cdHours = document.getElementById("cdHours");
+      const cdMins = document.getElementById("cdMins");
+      const cdSecs = document.getElementById("cdSecs");
+      const countdownEl = document.getElementById("countdown");
+      const countdownWrap = document.getElementById("countdownWrap");
+
+      function tickCountdown() {
+        const now = Date.now();
+        const diff = ANNIVERSARY - now;
+        if (diff <= 0) {
+          countdownEl.innerHTML = '<p class="countdown-done">One year. Still us. 🤍</p>';
+          return;
+        }
+        const s = Math.floor(diff / 1000);
+        const d = Math.floor(s / 86400);
+        const h = Math.floor((s % 86400) / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const sec = s % 60;
+        cdDays.textContent = String(d);
+        cdHours.textContent = pad(h);
+        cdMins.textContent = pad(m);
+        cdSecs.textContent = pad(sec);
+      }
+
+      tickCountdown();
+      setInterval(tickCountdown, 1000);
     })();
   </script>
 </body>
