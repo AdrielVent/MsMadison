@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Year in Words 🤍</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+    :root {
+      --cream: #FBF9F4;
+      --cream-dark: #F0EBE2;
+      --sepia: #3C3530;
+      --sepia-muted: #6B6259;
+      --seafoam: #A3B8B5;
+      --seafoam-deep: #7A9693;
+      --seafoam-light: rgba(163, 184, 181, 0.22);
+      --rule: rgba(60, 53, 48, 0.14);
+      --rule-strong: rgba(60, 53, 48, 0.28);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+      background: var(--cream);
+      color: var(--sepia);
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mono {
+      font-family: "IBM Plex Mono", "Courier New", monospace;
+      font-size: 0.82em;
+      letter-spacing: 0.02em;
+    }
+
+    .page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.35rem 4rem;
+    }
+
+    /* ── Vinyl opener / album cover ── */
+    .vinyl-opener {
+      text-align: center;
+      padding: 2.75rem 1.5rem 2.5rem;
+      margin-bottom: 2.75rem;
+      border: 1px solid var(--rule-strong);
+      background:
+        linear-gradient(180deg, #fff 0%, var(--cream) 40%, var(--cream-dark) 100%);
+      position: relative;
+    }
+
+    .vinyl-opener::before,
+    .vinyl-opener::after {
+      content: "";
+      position: absolute;
+      left: 1.25rem;
+      right: 1.25rem;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .vinyl-opener::before { top: 1.25rem; }
+    .vinyl-opener::after { bottom: 1.25rem; }
+
+    .catalog-no {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sepia-muted);
+      margin-bottom: 1.75rem;
+    }
+
+    .vinyl-groove {
+      width: 7.5rem;
+      height: 7.5rem;
+      margin: 0 auto 1.75rem;
+      border-radius: 50%;
+      background:
+        repeating-radial-gradient(
+          circle at center,
+          transparent 0,
+          transparent 3px,
+          rgba(60, 53, 48, 0.04) 3px,
+          rgba(60, 53, 48, 0.04) 4px
+        ),
+        radial-gradient(circle at 32% 28%, #fff 0%, var(--cream-dark) 55%, #d8d0c4 100%);
+      border: 1px solid var(--rule-strong);
+      box-shadow: inset 0 0 0 4px var(--cream), inset 0 0 0 5px var(--rule);
+      position: relative;
+    }
+
+    .vinyl-groove::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 50%;
+      background: var(--sepia);
+      border: 2px solid var(--cream);
+    }
+
+    .vinyl-opener h1 {
+      font-size: clamp(2rem, 7vw, 2.85rem);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      line-height: 1.15;
+      margin-bottom: 0.65rem;
+      color: var(--sepia);
+    }
+
+    .vinyl-opener .subtitle {
+      font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+      font-style: italic;
+      font-weight: 500;
+      color: var(--sepia-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .vinyl-opener .subtitle .dates {
+      display: block;
+      margin-top: 0.35rem;
+      font-style: normal;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: var(--seafoam-deep);
+    }
+
+    /* ── Section headers ── */
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-head h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .section-head span {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      color: var(--sepia-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    section {
+      margin-bottom: 2.75rem;
+    }
+
+    /* ── Track list (sleeve back) ── */
+    .track-list {
+      list-style: none;
+      border: 1px solid var(--rule);
+      background: #fff;
+    }
+
+    .track {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem 1rem;
+      align-items: baseline;
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--rule);
+      transition: background 0.2s ease;
+    }
+
+    .track:last-child {
+      border-bottom: none;
+    }
+
+    .track:hover {
+      background: var(--seafoam-light);
+    }
+
+    .track-no {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--seafoam-deep);
+      letter-spacing: 0.06em;
+      min-width: 4.5rem;
+    }
+
+    .track-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .track-detail {
+      font-size: 0.92rem;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--sepia-muted);
+      margin-top: 0.15rem;
+    }
+
+    .track-value {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      color: var(--sepia-muted);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 520px) {
+      .track {
+        grid-template-columns: auto 1fr;
+      }
+
+      .track-value {
+        grid-column: 2;
+        text-align: left;
+        margin-top: 0.2rem;
+      }
+    }
+
+    /* ── Communication waveform bar ── */
+    .waveform-block {
+      border: 1px solid var(--rule);
+      background: #fff;
+      padding: 1.5rem 1.25rem;
+    }
+
+    .waveform-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .waveform-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .waveform-label.her { color: var(--seafoam-deep); }
+    .waveform-label.you { color: var(--sepia-muted); }
+
+    .waveform-sublabel {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.65rem;
+      color: var(--sepia-muted);
+      margin-top: 0.2rem;
+    }
+
+    .waveform-bar {
+      display: flex;
+      height: 2rem;
+      border: 1px solid var(--rule);
+      background: var(--cream-dark);
+    }
+
+    .waveform-her {
+      width: 63.5%;
+      background: var(--seafoam);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--sepia);
+      letter-spacing: 0.04em;
+    }
+
+    .waveform-you {
+      width: 36.5%;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--sepia-muted);
+      letter-spacing: 0.04em;
+      border-left: 1px solid var(--rule);
+    }
+
+    .waveform-caption {
+      margin-top: 0.85rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      color: var(--sepia-muted);
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+
+    /* ── Liner notes / lyric sheet quote ── */
+    .liner-notes {
+      border: 1px solid var(--rule-strong);
+      background: #fff;
+      padding: 2rem 1.75rem 1.75rem;
+      position: relative;
+      box-shadow: 2px 3px 0 rgba(60, 53, 48, 0.06);
+    }
+
+    .liner-notes::before {
+      content: "Recorded Oct 30, 2025";
+      display: block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--seafoam-deep);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px dashed var(--rule);
+    }
+
+    .liner-notes blockquote {
+      font-size: clamp(1.15rem, 3.2vw, 1.4rem);
+      font-weight: 500;
+      font-style: italic;
+      line-height: 1.7;
+      color: var(--sepia);
+    }
+
+    .liner-notes blockquote p {
+      margin-bottom: 0.85rem;
+    }
+
+    .liner-notes blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    .liner-attribution {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--rule);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--sepia-muted);
+    }
+
+    .liner-attribution strong {
+      color: var(--sepia);
+      font-weight: 500;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--rule);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sepia-muted);
+    }
+
+    footer em {
+      font-style: normal;
+      color: var(--seafoam-deep);
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+
+    <header class="vinyl-opener">
+      <p class="catalog-no">W2E-2025 / Side A</p>
+      <div class="vinyl-groove" aria-hidden="true"></div>
+      <h1>Our Year in Words 🤍</h1>
+      <p class="subtitle">
+        A 1-Year Chatography Log
+        <span class="dates">Sep 08, 2025 → Jun 11, 2026</span>
+      </p>
+    </header>
+
+    <section aria-labelledby="tracks-heading">
+      <div class="section-head">
+        <h2 id="tracks-heading">Track List</h2>
+        <span>Side A — Statistics</span>
+      </div>
+      <ol class="track-list">
+        <li class="track">
+          <span class="track-no">Track 01</span>
+          <div>
+            <div class="track-title">Words Exchanged</div>
+            <div class="track-detail">Total vocabulary across all messages</div>
+          </div>
+          <span class="track-value">730,204</span>
+        </li>
+        <li class="track">
+          <span class="track-no">Track 02</span>
+          <div>
+            <div class="track-title">Total Messages</div>
+            <div class="track-detail">Every text sent between us</div>
+          </div>
+          <span class="track-value">106,124</span>
+        </li>
+        <li class="track">
+          <span class="track-no">Track 03</span>
+          <div>
+            <div class="track-title">The Busiest Session</div>
+            <div class="track-detail">June 04, 2026</div>
+          </div>
+          <span class="track-value">1,295 texts</span>
+        </li>
+        <li class="track">
+          <span class="track-no">Track 04</span>
+          <div>
+            <div class="track-title">Vocal Dynamics</div>
+            <div class="track-detail">Her average: 7.3 words · Your average: 6.3 words</div>
+          </div>
+          <span class="track-value">7.3 / 6.3</span>
+        </li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="waveform-heading">
+      <div class="section-head">
+        <h2 id="waveform-heading">Communication Waveform</h2>
+        <span>Word Share</span>
+      </div>
+      <div class="waveform-block">
+        <div class="waveform-labels">
+          <div>
+            <div class="waveform-label her">Her — 63.5%</div>
+            <div class="waveform-sublabel">463,641 words</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="waveform-label you">You — 36.5%</div>
+            <div class="waveform-sublabel">266,563 words</div>
+          </div>
+        </div>
+        <div class="waveform-bar" role="img" aria-label="Her 63.5 percent, You 36.5 percent of total words">
+          <div class="waveform-her">63.5%</div>
+          <div class="waveform-you">36.5%</div>
+        </div>
+        <p class="waveform-caption">Combined output · 730,204 words total</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="quote-heading">
+      <div class="section-head">
+        <h2 id="quote-heading">Featured Recording</h2>
+        <span>Liner Notes</span>
+      </div>
+      <figure class="liner-notes">
+        <blockquote>
+          <p>You are everything I ask for. I pray for someone to be weird as me, an artist like me, loves being themselves like me.</p>
+          <p>When you get me CFA, when you make me gifts&hellip; I appreciate the mini details.</p>
+        </blockquote>
+        <figcaption class="liner-attribution">
+          <strong>My Eternal Life 🤍</strong> — 700 words · Rank #3 longest message
+        </figcaption>
+      </figure>
+    </section>
+
+    <footer>
+      <em>Our Year in Words</em> · Sep 08, 2025 — Jun 11, 2026
+    </footer>
+
+  </main>
+</body>
+</html>
