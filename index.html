@@ -2,912 +2,865 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#FBF9F4">
-  <title>Our Year in Words 🤍</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#FAF7F0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Our Year Wrapped 🤍</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap");
-
     :root {
-      --cream: #FBF9F4;
-      --cream-dark: #F0EBE2;
-      --sepia: #3C3530;
-      --sepia-muted: #6B6259;
-      --seafoam: #A3B8B5;
-      --seafoam-deep: #7A9693;
-      --seafoam-light: rgba(163, 184, 181, 0.28);
-      --rule: rgba(60, 53, 48, 0.12);
-      --rule-strong: rgba(60, 53, 48, 0.26);
-      --slide-pad: clamp(1.25rem, 5vw, 2.5rem);
+      --cream: #FAF7F0;
+      --charcoal: #2A2421;
+      --charcoal-muted: #5C534D;
+      --seafoam: #92A8A4;
+      --seafoam-deep: #6E8A86;
+      --paper: #FFFDF8;
+      --shadow: 4px 6px 0 rgba(42, 36, 33, 0.12);
+      --shadow-lg: 8px 10px 0 rgba(42, 36, 33, 0.14);
+      --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html {
-      height: 100%;
-      scroll-behavior: smooth;
-    }
-
+    html, body { height: 100%; overflow: hidden; touch-action: manipulation; }
     body {
-      font-family: "Cormorant Garamond", Georgia, serif;
+      font-family: "Playfair Display", Georgia, serif;
       background: var(--cream);
-      color: var(--sepia);
-      height: 100%;
-      overflow: hidden;
+      color: var(--charcoal);
       -webkit-font-smoothing: antialiased;
+      user-select: none;
     }
 
-    .mono {
-      font-family: "IBM Plex Mono", "Courier New", monospace;
+  .mono { font-family: "IBM Plex Mono", monospace; }
+
+    /* ── Progress bars ── */
+    .story-chrome {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: calc(0.55rem + var(--safe-top)) 0.65rem 0.4rem;
+      background: linear-gradient(180deg, var(--cream) 75%, transparent);
+      pointer-events: none;
     }
 
-    /* ── Story scroller ── */
-    .story {
-      height: 100dvh;
-      overflow-y: auto;
-      scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
+    .progress-row {
+      display: flex;
+      gap: 4px;
     }
 
-    .slide {
-      min-height: 100dvh;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
+    .progress-seg {
+      flex: 1;
+      height: 3px;
+      background: rgba(42, 36, 33, 0.15);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--seafoam);
+      border-radius: 2px;
+      transition: width 0.08s linear;
+    }
+
+    .progress-seg.done .progress-fill { width: 100%; transition: none; }
+    .progress-seg.active .progress-fill { background: var(--charcoal); }
+
+    .card-counter {
+      margin-top: 0.45rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--charcoal-muted);
+      text-align: center;
+    }
+
+    /* ── Story stage ── */
+    .story-stage {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .story-card {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: calc(var(--slide-pad) + 2.5rem) var(--slide-pad) calc(var(--slide-pad) + var(--safe-bottom) + 3rem);
-      position: relative;
-      isolation: isolate;
-    }
-
-    .slide::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 80% 50% at 50% 0%, var(--seafoam-light), transparent 70%);
-      opacity: 0.55;
-      z-index: -1;
+      padding: calc(2.75rem + var(--safe-top)) 1.15rem calc(1.5rem + var(--safe-bottom));
+      opacity: 0;
+      transform: translateY(28px) scale(0.98);
       pointer-events: none;
+      transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .slide-inner {
-      width: min(100%, 36rem);
-      margin: 0 auto;
+    .story-card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      z-index: 10;
     }
 
-    .slide-tag {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(0.58rem, 2vw, 0.68rem);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--seafoam-deep);
-      margin-bottom: 1rem;
+    .story-card.exit {
+      opacity: 0;
+      transform: translateY(-18px) scale(0.99);
+      z-index: 5;
     }
 
-    .slide-title {
-      font-size: clamp(2rem, 8vw, 3.2rem);
-      font-weight: 600;
-      line-height: 1.1;
-      letter-spacing: 0.01em;
-      margin-bottom: 0.75rem;
+    .card-inner {
+      width: min(100%, 24rem);
+      position: relative;
     }
 
-    .slide-sub {
-      font-size: clamp(1rem, 3vw, 1.2rem);
-      font-style: italic;
-      color: var(--sepia-muted);
-      line-height: 1.5;
-    }
-
-    /* ── Chrome: progress + audio ── */
-    .chrome {
+    /* Tap zones */
+    .tap-zones {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
+      inset: 0;
+      z-index: 150;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      padding: max(0.65rem, env(safe-area-inset-top)) 1rem 0.65rem;
-      background: linear-gradient(180deg, var(--cream) 70%, transparent);
+    }
+
+    .tap-back { width: 32%; height: 100%; }
+    .tap-fwd { width: 68%; height: 100%; }
+
+    /* Zine textures */
+    .zine-card {
+      background: var(--paper);
+      border: 2px solid var(--charcoal);
+      box-shadow: var(--shadow-lg);
+      padding: 1.35rem 1.2rem;
+      position: relative;
+    }
+
+    .zine-card::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1px dashed rgba(42, 36, 33, 0.18);
       pointer-events: none;
     }
 
-    .chrome > * { pointer-events: auto; }
-
-    .progress-dots {
-      display: flex;
-      gap: 0.35rem;
-      flex: 1;
+    .zine-card.offset {
+      transform: rotate(-1.2deg);
     }
 
-    .dot {
-      height: 3px;
-      flex: 1;
-      max-width: 2.5rem;
-      background: var(--rule);
-      border-radius: 2px;
-      transition: background 0.35s ease, transform 0.35s ease;
-    }
-
-    .dot.active {
-      background: var(--seafoam);
-      transform: scaleY(1.4);
-    }
-
-    .slide-counter {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
-      color: var(--sepia-muted);
-      white-space: nowrap;
-    }
-
-    .audio-widget {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: #fff;
-      border: 1px solid var(--rule);
-      border-radius: 999px;
-      padding: 0.25rem 0.65rem 0.25rem 0.35rem;
-      max-width: 11rem;
-    }
-
-    .audio-btn {
-      width: 1.65rem;
-      height: 1.65rem;
-      border-radius: 50%;
-      border: 1px solid var(--rule-strong);
-      background: var(--cream);
-      color: var(--sepia);
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      font-size: 0.55rem;
-      flex-shrink: 0;
-      transition: background 0.2s, border-color 0.2s;
-    }
-
-    .audio-btn:hover { background: var(--seafoam-light); border-color: var(--seafoam); }
-
-    .audio-meta {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .audio-label {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.52rem;
-      letter-spacing: 0.06em;
-      color: var(--sepia-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .audio-track {
-      width: 100%;
-      height: 2px;
-      background: var(--rule);
-      margin-top: 0.2rem;
-      border-radius: 1px;
-      overflow: hidden;
-    }
-
-    .audio-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--seafoam);
-      transition: width 0.15s linear;
-    }
-
-    .scroll-hint {
-      position: absolute;
-      bottom: calc(1.25rem + var(--safe-bottom));
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--sepia-muted);
-      animation: pulse 2.4s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.35; transform: translateX(-50%) translateY(0); }
-      50% { opacity: 0.85; transform: translateX(-50%) translateY(4px); }
-    }
-
-    /* ── Slide 1: Vinyl jacket ── */
-    .jacket {
-      text-align: center;
-      border: 1px solid var(--rule-strong);
-      padding: clamp(2rem, 6vw, 3rem) clamp(1.25rem, 4vw, 2rem);
-      background: linear-gradient(165deg, #fff 0%, var(--cream) 45%, var(--cream-dark) 100%);
-      box-shadow: 0 12px 40px rgba(60, 53, 48, 0.06);
-    }
-
-    .vinyl-disc {
-      width: clamp(6.5rem, 28vw, 9rem);
-      height: clamp(6.5rem, 28vw, 9rem);
-      margin: 0 auto 1.75rem;
-      border-radius: 50%;
-      background:
-        repeating-radial-gradient(circle, transparent 0, transparent 3px, rgba(60,53,48,0.035) 3px, rgba(60,53,48,0.035) 4px),
-        radial-gradient(circle at 35% 30%, #fff, var(--cream-dark) 60%, #d4ccc0);
-      border: 1px solid var(--rule-strong);
-      box-shadow: inset 0 0 0 5px var(--cream), inset 0 0 0 6px var(--rule);
-      position: relative;
-      animation: spin 24s linear infinite;
-      animation-play-state: paused;
-    }
-
-    .vinyl-disc.playing { animation-play-state: running; }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .vinyl-disc::after {
-      content: "";
-      position: absolute;
-      inset: 50%;
-      width: 1rem;
-      height: 1rem;
-      margin: -0.5rem;
-      border-radius: 50%;
-      background: var(--sepia);
-      border: 2px solid var(--cream);
-    }
-
-    .catalog {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.22em;
-      color: var(--sepia-muted);
-      margin-bottom: 1rem;
-    }
-
-    .jacket h1 { font-size: clamp(2.1rem, 9vw, 3.4rem); font-weight: 600; line-height: 1.08; }
-
-    .jacket .dates {
-      margin-top: 0.85rem;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(0.62rem, 2.2vw, 0.72rem);
-      letter-spacing: 0.1em;
-      color: var(--seafoam-deep);
-    }
-
-    .countdown-wrap {
-      margin-top: 1.75rem;
-      padding-top: 1.35rem;
-      border-top: 1px dashed var(--rule);
-    }
-
-    .countdown-label {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(0.58rem, 2vw, 0.65rem);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--sepia-muted);
-      margin-bottom: 0.85rem;
-    }
-
-    .countdown {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: clamp(0.35rem, 2vw, 0.65rem);
-    }
-
-    .countdown-unit {
-      border: 1px solid var(--rule);
-      background: #fff;
-      padding: 0.65rem 0.35rem;
-      text-align: center;
-    }
-
-    .countdown-num {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(1.25rem, 5vw, 1.85rem);
-      font-weight: 500;
-      color: var(--seafoam-deep);
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .countdown-name {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(0.48rem, 1.8vw, 0.55rem);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--sepia-muted);
-      margin-top: 0.35rem;
-    }
-
-    .countdown-done {
-      font-size: clamp(1.1rem, 4vw, 1.35rem);
-      font-style: italic;
-      color: var(--seafoam-deep);
-      font-weight: 600;
-    }
-
-    /* ── Slide 2: Liner notes stats ── */
-    .stat-pair {
-      display: grid;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .stat-block {
-      border: 1px solid var(--rule);
-      background: #fff;
-      padding: 1.35rem 1.25rem;
-      text-align: center;
-    }
-
-    .stat-num {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(1.85rem, 7vw, 2.75rem);
-      font-weight: 500;
-      color: var(--sepia);
-      letter-spacing: -0.02em;
-      line-height: 1;
-    }
-
-    .stat-label {
-      margin-top: 0.5rem;
-      font-size: 1.05rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .stat-sub {
-      margin-top: 0.25rem;
-      font-size: 0.95rem;
-      font-style: italic;
-      color: var(--sepia-muted);
-    }
-
-    /* ── Slide 3: Sound wave ── */
-    .wave-legend {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      margin: 1.25rem 0 0.85rem;
-      flex-wrap: wrap;
-    }
-
-    .wave-legend div { font-size: 1rem; font-weight: 600; }
-    .wave-legend .her { color: var(--seafoam-deep); }
-    .wave-legend .you { color: var(--sepia-muted); }
-
-    .wave-legend .mono {
-      display: block;
-      font-size: 0.62rem;
-      margin-top: 0.2rem;
-      font-weight: 400;
-    }
-
-    .wave-bar {
-      display: flex;
-      height: clamp(2.5rem, 8vw, 3.5rem);
-      border: 1px solid var(--rule-strong);
-      background: var(--cream-dark);
-      overflow: hidden;
-    }
-
-    .wave-her {
-      width: 63.5%;
-      background: linear-gradient(90deg, var(--seafoam), #b8cbc8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(0.65rem, 2.5vw, 0.78rem);
-      font-weight: 500;
-      position: relative;
-    }
-
-    .wave-her::after {
-      content: "";
-      position: absolute;
-      right: 0;
-      top: 15%;
-      bottom: 15%;
-      width: 1px;
-      background: rgba(60,53,48,0.15);
-    }
-
-    .wave-you {
-      width: 36.5%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(0.65rem, 2.5vw, 0.78rem);
-      color: var(--sepia-muted);
-    }
-
-    .wave-bars-deco {
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 3px;
-      height: 3.5rem;
-      margin-top: 1.75rem;
-    }
-
-    .wave-bars-deco span {
-      width: 4px;
-      background: var(--seafoam);
-      border-radius: 2px;
+    .zine-card.offset-r {
+      transform: rotate(1.5deg);
+      margin-top: -0.5rem;
+      margin-left: 0.4rem;
+      box-shadow: var(--shadow);
+      z-index: -1;
       opacity: 0.55;
-      animation: wave 1.2s ease-in-out infinite;
+      background: var(--seafoam);
+      border-color: var(--seafoam-deep);
     }
 
-  .wave-bars-deco span:nth-child(1) { height: 30%; animation-delay: 0s; }
-  .wave-bars-deco span:nth-child(2) { height: 55%; animation-delay: 0.1s; }
-  .wave-bars-deco span:nth-child(3) { height: 80%; animation-delay: 0.2s; }
-  .wave-bars-deco span:nth-child(4) { height: 45%; animation-delay: 0.15s; }
-  .wave-bars-deco span:nth-child(5) { height: 70%; animation-delay: 0.25s; }
-  .wave-bars-deco span:nth-child(6) { height: 35%; animation-delay: 0.05s; }
-  .wave-bars-deco span:nth-child(7) { height: 60%; animation-delay: 0.3s; }
-
-    @keyframes wave {
-      0%, 100% { transform: scaleY(0.7); opacity: 0.4; }
-      50% { transform: scaleY(1); opacity: 0.85; }
-    }
-
-    /* ── Slide 4: Peak track ── */
-    .peak-card {
-      border: 1px solid var(--rule-strong);
-      background: #fff;
-      padding: clamp(1.5rem, 5vw, 2.25rem);
-      text-align: center;
-      margin-top: 1rem;
-    }
-
-    .peak-date {
+    .tag {
       font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(0.68rem, 2.5vw, 0.78rem);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--seafoam-deep);
-      margin-bottom: 0.75rem;
-    }
-
-    .peak-num {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: clamp(3rem, 14vw, 5rem);
-      font-weight: 500;
-      line-height: 1;
-      color: var(--sepia);
-    }
-
-    .peak-unit {
-      font-size: clamp(1.1rem, 4vw, 1.45rem);
-      font-weight: 600;
-      margin-top: 0.35rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .peak-breakdown {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-top: 1.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px dashed var(--rule);
-      flex-wrap: wrap;
-    }
-
-    .peak-breakdown div {
-      text-align: center;
-      font-size: 0.95rem;
-    }
-
-    .peak-breakdown .mono {
-      display: block;
-      font-size: clamp(1.1rem, 4vw, 1.4rem);
-      margin-top: 0.2rem;
-      color: var(--seafoam-deep);
-    }
-
-    /* ── Slide 5: Gold vinyl quote ── */
-    .quote-scroll {
-      max-height: min(58dvh, 28rem);
-      overflow-y: auto;
-      border: 1px solid var(--rule-strong);
-      background: #fff;
-      padding: 1.25rem 1.15rem;
-      margin-top: 1rem;
-      font-size: clamp(0.95rem, 2.8vw, 1.08rem);
-      font-style: italic;
-      line-height: 1.65;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .quote-scroll p { margin-bottom: 0.85rem; }
-    .quote-scroll p:last-child { margin-bottom: 0; }
-
-    .quote-label {
-      display: block;
-      font-style: normal;
       font-size: 0.58rem;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--seafoam-deep);
       margin-bottom: 0.65rem;
     }
 
-    .quote-prelude {
-      padding-bottom: 1rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px dashed var(--rule);
-      color: var(--sepia-muted);
-      font-size: 0.92em;
+    .headline-xl {
+      font-size: clamp(2.4rem, 11vw, 3.6rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
     }
 
-    .quote-gold { color: var(--sepia); }
-
-    .quote-meta {
-      margin-top: 0.85rem;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.08em;
-      color: var(--sepia-muted);
-      text-align: center;
+    .headline-lg {
+      font-size: clamp(1.65rem, 7.5vw, 2.35rem);
+      font-weight: 700;
+      line-height: 1.05;
     }
 
-    /* ── Slide 6: Encore / Pageclip ── */
-    .encore-form-wrap {
-      border: 1px solid var(--rule-strong);
-      background: #fff;
-      padding: clamp(1.25rem, 4vw, 1.75rem);
-      margin-top: 1rem;
-    }
-
-    .encore-form-wrap label {
-      display: block;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--sepia-muted);
-      margin-bottom: 0.35rem;
-    }
-
-    .encore-form-wrap input,
-    .encore-form-wrap textarea {
-      width: 100%;
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 1.05rem;
-      color: var(--sepia);
-      background: var(--cream);
-      border: 1px solid var(--rule);
-      padding: 0.65rem 0.75rem;
-      margin-bottom: 1rem;
-      border-radius: 0;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .encore-form-wrap input:focus,
-    .encore-form-wrap textarea:focus {
-      border-color: var(--seafoam);
-    }
-
-    .encore-form-wrap textarea {
-      min-height: 6.5rem;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .encore-submit {
-      width: 100%;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      background: var(--sepia);
-      color: var(--cream);
-      border: none;
-      padding: 0.85rem 1rem;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-    }
-
-    .encore-submit:hover { background: var(--seafoam-deep); }
-    .encore-submit:active { transform: scale(0.98); }
-
-  .pageclip-form__success {
-      display: none;
-      text-align: center;
-      padding: 2rem 1rem;
-      font-size: 1.2rem;
+    .subline {
+      font-size: clamp(0.95rem, 3.5vw, 1.1rem);
       font-style: italic;
+      color: var(--charcoal-muted);
+      margin-top: 0.65rem;
+      line-height: 1.45;
+    }
+
+    .block-num {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(2.8rem, 14vw, 4.5rem);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--charcoal);
+    }
+
+    /* Card 1 collage */
+    .collage-bg {
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(146,168,164,0.35), transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(42,36,33,0.08), transparent 40%),
+        repeating-linear-gradient(-12deg, transparent, transparent 18px, rgba(42,36,33,0.03) 18px, rgba(42,36,33,0.03) 19px);
+      z-index: -1;
+    }
+
+    .tape-strip {
+      display: inline-block;
+      background: var(--charcoal);
+      color: var(--cream);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      padding: 0.3rem 0.65rem;
+      transform: rotate(-2deg);
+      margin-bottom: 1rem;
+    }
+
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+    }
+
+    .cd-box {
+      border: 1.5px solid var(--charcoal);
+      background: var(--cream);
+      padding: 0.5rem 0.25rem;
+      text-align: center;
+      box-shadow: 2px 3px 0 rgba(42,36,33,0.1);
+    }
+
+    .cd-val {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(1rem, 4.5vw, 1.35rem);
+      font-weight: 600;
       color: var(--seafoam-deep);
     }
 
-    .pageclip-form__success.visible { display: block; }
-
-    .encore-note {
-      margin-top: 0.85rem;
-      font-size: 0.82rem;
-      font-style: italic;
-      color: var(--sepia-muted);
-      text-align: center;
+    .cd-lbl {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.45rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--charcoal-muted);
+      margin-top: 0.2rem;
     }
 
-    @media (max-width: 480px) {
-      .chrome { flex-wrap: wrap; }
-      .audio-widget { max-width: 100%; order: 3; flex: 1 1 100%; }
-      .progress-dots { order: 1; }
-      .slide-counter { order: 2; }
+    /* Card 3 wave */
+    .wave-stack {
+      margin-top: 1.25rem;
+      border: 2px solid var(--charcoal);
+      overflow: hidden;
+      height: 3.5rem;
+      display: flex;
+      box-shadow: var(--shadow);
+    }
+
+    .wave-her {
+      width: 0%;
+      background: var(--seafoam);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .wave-you {
+      flex: 1;
+      background: var(--charcoal);
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .story-card.active .wave-her { width: 63.5%; }
+
+    /* Card 4 cassette */
+    .cassette-wrap {
+      margin: 1.5rem auto 0;
+      width: 11rem;
+      transform: translateX(-120%);
+      opacity: 0;
+      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+    }
+
+    .story-card.active .cassette-wrap {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .cassette {
+      background: var(--charcoal);
+      border-radius: 6px;
+      padding: 0.85rem;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .cassette-label {
+      background: var(--cream);
+      border: 1px solid var(--charcoal);
+      padding: 0.5rem;
+      text-align: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.6rem;
+    }
+
+    .cassette-reels {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 0.5rem;
+    }
+
+    .reel {
+      width: 2.2rem;
+      height: 2.2rem;
+      border: 2px solid var(--seafoam);
+      border-radius: 50%;
+      position: relative;
+      animation: spin 3s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .story-card.active .reel { animation-play-state: running; }
+
+    .reel::after {
+      content: "";
+      position: absolute;
+      inset: 30%;
+      background: var(--seafoam);
+      border-radius: 50%;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Card 5 flash date */
+    .date-flash {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(1.1rem, 5vw, 1.5rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      background: var(--seafoam);
+      color: var(--charcoal);
+      display: inline-block;
+      padding: 0.45rem 0.75rem;
+      transform: rotate(-1deg);
+      box-shadow: var(--shadow);
+      margin: 1rem 0;
+    }
+
+    /* Card 6 quote bubble */
+    .night-quote {
+      font-size: clamp(1.05rem, 4vw, 1.25rem);
+      font-style: italic;
+      line-height: 1.6;
+      border-left: 3px solid var(--seafoam);
+      padding-left: 1rem;
+      margin-top: 1rem;
+    }
+
+    .night-date {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      color: var(--charcoal-muted);
+      margin-top: 0.85rem;
+    }
+
+    /* Card 7 track list */
+    .tracklist {
+      list-style: none;
+      margin-top: 1rem;
+      border-top: 2px solid var(--charcoal);
+    }
+
+    .tracklist li {
+      display: flex;
+      gap: 0.75rem;
+      align-items: baseline;
+      padding: 0.75rem 0;
+      border-bottom: 1px dashed rgba(42,36,33,0.2);
+      font-size: 1rem;
+    }
+
+    .tracklist .tn {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      color: var(--seafoam-deep);
+      min-width: 3.5rem;
+    }
+
+    /* Card 8 vinyl */
+    .vinyl-stage {
+      display: flex;
+      justify-content: center;
+      margin: 1.25rem 0;
+    }
+
+    .vinyl-spin {
+      width: 9rem;
+      height: 9rem;
+      border-radius: 50%;
+      background:
+        repeating-radial-gradient(circle, transparent 0, transparent 2px, rgba(42,36,33,0.05) 2px, rgba(42,36,33,0.05) 3px),
+        radial-gradient(circle at 30% 25%, #444, var(--charcoal) 55%, #1a1614);
+      border: 2px solid var(--charcoal);
+      box-shadow: var(--shadow-lg);
+      animation: spin 5s linear infinite;
+      animation-play-state: paused;
+      position: relative;
+    }
+
+    .story-card.active .vinyl-spin { animation-play-state: running; }
+
+    .vinyl-spin::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: var(--seafoam);
+      border: 2px solid var(--charcoal);
+    }
+
+    .wish-quote {
+      font-size: clamp(1.15rem, 4.5vw, 1.4rem);
+      font-style: italic;
+      text-align: center;
+      line-height: 1.5;
+      margin-top: 0.5rem;
+    }
+
+    /* Card 9 lyric sheet */
+    .lyric-sheet {
+      max-height: min(52dvh, 22rem);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      font-size: 0.88rem;
+      font-style: italic;
+      line-height: 1.65;
+      margin-top: 0.75rem;
+      padding-right: 0.35rem;
+      user-select: text;
+    }
+
+    .lyric-sheet p { margin-bottom: 0.75rem; }
+    .lyric-sheet .hl { color: var(--seafoam-deep); font-weight: 700; font-style: italic; }
+
+    .typewriter-top {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--charcoal);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Card 10 recap grid */
+    .recap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+      margin: 1rem 0;
+    }
+
+    .recap-cell {
+      border: 1.5px solid var(--charcoal);
+      background: var(--cream);
+      padding: 0.65rem 0.5rem;
+      text-align: center;
+      box-shadow: 2px 3px 0 rgba(42,36,33,0.08);
+    }
+
+    .recap-cell.wide { grid-column: 1 / -1; }
+
+    .recap-val {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(0.95rem, 4vw, 1.15rem);
+      font-weight: 600;
+    }
+
+    .recap-lbl {
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--charcoal-muted);
+      margin-top: 0.2rem;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .encore-form input,
+    .encore-form textarea {
+      width: 100%;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.75rem;
+      border: 1.5px solid var(--charcoal);
+      background: var(--paper);
+      padding: 0.55rem 0.65rem;
+      margin-bottom: 0.5rem;
+      color: var(--charcoal);
+      border-radius: 0;
+    }
+
+    .encore-form textarea { min-height: 4rem; resize: none; }
+
+    .encore-form button {
+      width: 100%;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--charcoal);
+      color: var(--cream);
+      border: none;
+      padding: 0.7rem;
+      cursor: pointer;
+    }
+
+    .pageclip-form__success {
+      display: none;
+      text-align: center;
+      font-style: italic;
+      color: var(--seafoam-deep);
+      padding: 0.75rem;
+    }
+
+    .pageclip-form__success.show { display: block; }
+
+    .tap-hint {
+      position: fixed;
+      bottom: calc(0.65rem + var(--safe-bottom));
+      left: 0; right: 0;
+      text-align: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--charcoal-muted);
+      opacity: 0.5;
+      z-index: 120;
+      pointer-events: none;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .vinyl-disc { animation: none; }
-      .wave-bars-deco span { animation: none; }
-      .scroll-hint { animation: none; }
-      .story { scroll-behavior: auto; }
+      .story-card, .wave-her, .cassette-wrap, .reel, .vinyl-spin { transition: none !important; animation: none !important; }
     }
   </style>
 </head>
 <body>
 
-  <div class="chrome" aria-hidden="false">
-    <div class="progress-dots" id="progressDots" aria-label="Story progress">
-      <span class="dot active"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-    </div>
-    <span class="slide-counter" id="slideCounter">01 / 06</span>
-    <div class="audio-widget">
-      <button class="audio-btn" id="audioToggle" type="button" aria-label="Play background music">▶</button>
-      <div class="audio-meta">
-        <div class="audio-label">Instrumental · Icons8</div>
-        <div class="audio-track"><div class="audio-fill" id="audioFill"></div></div>
-      </div>
-    </div>
+  <div class="story-chrome">
+    <div class="progress-row" id="progressRow"></div>
+    <div class="card-counter" id="cardCounter">01 / 10</div>
   </div>
 
-  <!-- Replace src with your Icons8 download path, e.g. assets/wave-instrumental.mp3 -->
-  <audio id="bgAudio" loop preload="metadata"
-    src="assets/background-instrumental.mp3"
-    data-icons8-placeholder="https://icons8.com/music/all/tracks/instrumental">
-  </audio>
+  <div class="tap-zones" id="tapZones">
+    <div class="tap-back" id="tapBack" aria-label="Previous card"></div>
+    <div class="tap-fwd" id="tapFwd" aria-label="Next card"></div>
+  </div>
 
-  <main class="story" id="story">
+  <div class="story-stage" id="storyStage">
 
-    <!-- Slide 1 -->
-    <section class="slide" id="slide-1" data-slide="1">
-      <div class="slide-inner jacket">
-        <p class="catalog">W2E-2025 · SIDE A</p>
-        <div class="vinyl-disc" id="vinylDisc" aria-hidden="true"></div>
-        <h1>Our Year in Words 🤍</h1>
-        <p class="slide-sub">A 1-Year Chatography Log</p>
-        <p class="dates">SEP 08, 2025 → JUN 11, 2026</p>
-        <div class="countdown-wrap" id="countdownWrap" aria-live="polite">
-          <p class="countdown-label">Until our 1-year · Sep 28, 2026</p>
-          <div class="countdown" id="countdown">
-            <div class="countdown-unit"><div class="countdown-num" id="cdDays">—</div><div class="countdown-name">Days</div></div>
-            <div class="countdown-unit"><div class="countdown-num" id="cdHours">—</div><div class="countdown-name">Hrs</div></div>
-            <div class="countdown-unit"><div class="countdown-num" id="cdMins">—</div><div class="countdown-name">Min</div></div>
-            <div class="countdown-unit"><div class="countdown-num" id="cdSecs">—</div><div class="countdown-name">Sec</div></div>
+    <!-- Card 1 -->
+    <article class="story-card active" data-card="0">
+      <div class="collage-bg"></div>
+      <div class="card-inner">
+        <div class="zine-card offset">
+          <span class="tape-strip">SIDE A · OUR YEAR</span>
+          <h1 class="headline-xl">Our Year<br>Wrapped 🤍</h1>
+          <p class="subline">Adriel + Zoe<br>Sep 08, 2025 → Jun 11, 2026</p>
+          <p class="tag" style="margin-top:1rem;">Until Sep 28, 2026</p>
+          <div class="countdown-grid" id="countdown">
+            <div class="cd-box"><div class="cd-val" id="cdD">—</div><div class="cd-lbl">Days</div></div>
+            <div class="cd-box"><div class="cd-val" id="cdH">—</div><div class="cd-lbl">Hrs</div></div>
+            <div class="cd-box"><div class="cd-val" id="cdM">—</div><div class="cd-lbl">Min</div></div>
+            <div class="cd-box"><div class="cd-val" id="cdS">—</div><div class="cd-lbl">Sec</div></div>
+          </div>
+        </div>
+        <div class="zine-card offset-r" aria-hidden="true"></div>
+      </div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="story-card" data-card="1">
+      <div class="card-inner">
+        <p class="tag">The Soundtrack Volume</p>
+        <h2 class="headline-lg">We went heavy on the data frames.</h2>
+        <div class="zine-card" style="margin-top:1.25rem;text-align:center;">
+          <div class="block-num" id="wordCounter">0</div>
+          <p class="subline" style="margin-top:0.5rem;font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;">Total words exchanged</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="story-card" data-card="2">
+      <div class="card-inner">
+        <p class="tag">The Frequency Check</p>
+        <h2 class="headline-lg">Who carried the frequencies?</h2>
+        <div class="wave-stack">
+          <div class="wave-her">HER 63.5%</div>
+          <div class="wave-you">YOU 36.5%</div>
+        </div>
+        <p class="subline" style="margin-top:1rem;">Zoe talks 1.4× faster. You listened to every single note.</p>
+        <p class="mono" style="font-size:0.58rem;margin-top:0.5rem;color:var(--charcoal-muted);">463,641 · 266,563 words</p>
+      </div>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="story-card" data-card="3">
+      <div class="card-inner">
+        <p class="tag">The Heavy Rotation</p>
+        <h2 class="headline-lg"><span class="block-num" style="font-size:clamp(2rem,9vw,2.8rem);">106,124</span></h2>
+        <p class="subline">Total messages traded. On endless loop.</p>
+        <div class="cassette-wrap">
+          <div class="cassette">
+            <div class="cassette-label">ADRIEL + ZOE · HEAVY ROTATION</div>
+            <div class="cassette-reels">
+              <div class="reel"></div>
+              <div class="reel"></div>
+            </div>
           </div>
         </div>
       </div>
-      <span class="scroll-hint">Scroll</span>
-    </section>
+    </article>
 
-    <!-- Slide 2 -->
-    <section class="slide" id="slide-2" data-slide="2">
-      <div class="slide-inner">
-        <p class="slide-tag">Liner Notes</p>
-        <h2 class="slide-title">The Typography<br>of Us</h2>
-        <p class="slide-sub">Every word we traded across one extraordinary year.</p>
-        <div class="stat-pair">
-          <div class="stat-block">
-            <div class="stat-num">730,204</div>
-            <div class="stat-label">Words Exchanged</div>
-            <div class="stat-sub">Her 463,641 · You 266,563</div>
+    <!-- Card 5 -->
+    <article class="story-card" data-card="4">
+      <div class="card-inner">
+        <p class="tag">The Busiest Track 📢</p>
+        <h2 class="headline-lg">Our Loudest Session</h2>
+        <div class="date-flash">JUNE 04, 2026</div>
+        <div class="zine-card" style="text-align:center;">
+          <div class="block-num" id="msgCounter">0</div>
+          <p class="subline" style="font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;margin-top:0.4rem;">Messages in 24 hours</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 6 -->
+    <article class="story-card" data-card="5">
+      <div class="card-inner">
+        <p class="tag">The Late-Night Phase</p>
+        <h2 class="headline-lg">When the text turns sweet.</h2>
+        <div class="zine-card">
+          <p class="night-quote">"thank youuu for such a cute first date i really enjoyed it…"</p>
+          <p class="night-date">SEP 11, 2025 · GOODNIGHT TEXT</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 7 -->
+    <article class="story-card" data-card="6">
+      <div class="card-inner">
+        <p class="tag">The Comfort Track</p>
+        <h2 class="headline-lg">Your Ultimate Go-To Habits.</h2>
+        <ul class="tracklist zine-card">
+          <li><span class="tn">TRACK 01</span> Wingstop Cravings</li>
+          <li><span class="tn">TRACK 02</span> Homemade Tacos</li>
+          <li><span class="tn">TRACK 03</span> Fresh Fruit Smoothies</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- Card 8 -->
+    <article class="story-card" data-card="7">
+      <div class="card-inner" style="text-align:center;">
+        <p class="tag">The Ultimate Wishlist</p>
+        <h2 class="headline-lg">The Record You're Missing.</h2>
+        <div class="vinyl-stage"><div class="vinyl-spin"></div></div>
+        <p class="wish-quote">"i wish i had a wave to earth one :("</p>
+        <p class="night-date">JAN 24, 2026</p>
+      </div>
+    </article>
+
+    <!-- Card 9 -->
+    <article class="story-card" data-card="8">
+      <div class="card-inner">
+        <p class="tag">The Linernotes / Fan Lyric</p>
+        <h2 class="headline-lg" style="font-size:clamp(1.4rem,6vw,1.9rem);">The holy grail.</h2>
+        <div class="zine-card">
+          <div class="typewriter-top">OCT 30, 2025 · 700 WORDS · MY ETERNAL LIFE 🤍</div>
+          <div class="lyric-sheet"><p>AAAGHWHBENDNCC Boom thank you babe mama EXACTLY INCANT DO SHIT NOO I’m just very tempted to pull ur panties and FINGER YOU (I’m not bc ik it’s too soon) hehehehehe my man ITS OKAY TRUST MEEEE you do other things perfectly:) ugh babe 😩 AHH EEEP I hope Babe your perfect Dude like Idk I wanna be connect to you Idk No sex, like straight be in you ,that’s why i squeeze you tight Imma beee to do it to you after NNN YAYAYAYYAAYY LETS BECOME ONE i love when you hug me tight i’m nowhere near perfect adriel lolll AAAHHHHH Babe Zoe inshanally you forgot my middle name :p can i give you a middle name hehehehhee <strong class="hl">You are everything I ask for.</strong> I’ll even tell you, <strong class="hl">I pray for someone to be weird as me</strong>, and artist like me, <strong class="hl">loves being themselves like me</strong>.</p><p>Your eyes make me feel emotions and you’ve seen it multiple times. I cried for someone like you, I want to cry in your arms.</p><p>When you get me CFA, when you make me gifts WHEN YOU DO YHE MOST LITERALLY LITTEST THINGS , <strong class="hl"><strong class="hl">I appreciate the mini details</strong>.</strong> Why do you think I always bring ur card with me? <strong class="hl">I love you</strong> and I love everything you do.</p><p>And I make sure I bring you up almost every time it’s a perfect time to talk about you. I think of you I pray abt you , I make sure you eat and even though I don’t have enough money, I’ll still offer to pay for ur food or anything, I’ll try my best to be there for you.</p><p>You are wife material and I KNOW it’s been one month, but I just feel something different about you. We clicked. Even the day I met you, I felt something inside me. Yes I get insecure. Yes I get sad. Yes I get emotional. Yes I have issues I need to work on.</p><p>But I’m trying to be a better person and better version of myself for you and me so we can last long. If something is wrong , we will talk. If we need each other, we will always be there for each other, no matter how little time we hang out with each other.</p><p>I want you to feel comfortable and loved and make sure that any overthinking u get abt me or us, I make sure I comfort you. I want to go past 4 years, I wanna grow old tgr.</p><p>I want kids, I want to connect spirituality and mentally and physically. <strong class="hl">I love you</strong> Zoe, and we will make sure we last long and we keep each other accountable so we grow together. You’re not perfect. But you’re <strong class="hl">perfect for me</strong>.</p><p>That’s all that matters.</p><p>What’s ur middle name and GIVE ME NAME YGG i love you so much adriel:( that’s not a sad face it’s like a pout rn cause what the heck, you’re too sweet for me i really don’t deserve you. i’ve said this many times too, you’re <strong class="hl">perfect for me</strong>. you say a lot that i deserve better but <strong class="hl">you are my better</strong>. i’ve been waiting for someone to actually love me and actually care for me and you go beyond that and i can’t express how grateful i am to have you in my life. i know you’ve been through a lot and i know i can’t take that pain away, but i will do my absolute best to make you happier and make you feel loved because that’s truly what you deserve. you’re just a sweet and kind soul adriel and i don’t know what i did to get someone as perfect as you in my life. i do not care, in my eyes you are perfect. i told you my middle name the first day we met. i think.</p><p>GRRRR it’s madison:) that can be your middle name TOO AAAGHWHBENDNCC I LOVE YOU I LOVE YOU I LOVE YOU I LOVE YOU babe let’s just lowkey sleep tgr I want you to spoon me Zoe madison inshanally Adriel Madison Ventura babe let’s lowkey combine and become one entity HEHEHE I LOVE YOU</p></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 10 -->
+    <article class="story-card" data-card="9">
+      <div class="card-inner">
+        <p class="tag">The Encore</p>
+        <h2 class="headline-lg" style="font-size:clamp(1.5rem,6vw,2rem);">Share Card 🤍</h2>
+        <div class="zine-card">
+          <div class="recap-grid">
+            <div class="recap-cell wide"><div class="recap-val">730,204</div><div class="recap-lbl">Words</div></div>
+            <div class="recap-cell"><div class="recap-val">106,124</div><div class="recap-lbl">Messages</div></div>
+            <div class="recap-cell"><div class="recap-val">63.5%</div><div class="recap-lbl">Her share</div></div>
+            <div class="recap-cell wide"><div class="recap-val">JUN 04 · 1,295</div><div class="recap-lbl">Busiest day</div></div>
+            <div class="recap-cell wide"><div class="recap-val">SEP 28, 2026</div><div class="recap-lbl">1-year anniversary</div></div>
           </div>
-          <div class="stat-block">
-            <div class="stat-num">106,124</div>
-            <div class="stat-label">Total Messages</div>
-            <div class="stat-sub">Her 63,681 · You 42,443</div>
-          </div>
-        </div>
-      </div>
-      <span class="scroll-hint">Scroll</span>
-    </section>
-
-    <!-- Slide 3 -->
-    <section class="slide" id="slide-3" data-slide="3">
-      <div class="slide-inner">
-        <p class="slide-tag">Sound Wave</p>
-        <h2 class="slide-title">Word Share</h2>
-        <p class="slide-sub">Who carried the conversation — measured in vocabulary.</p>
-        <div class="wave-legend">
-          <div class="her">Her — 63.5%<span class="mono">463,641 words</span></div>
-          <div class="you">You — 36.5%<span class="mono">266,563 words</span></div>
-        </div>
-        <div class="wave-bar" role="img" aria-label="Her 63.5 percent, You 36.5 percent word share">
-          <div class="wave-her">63.5%</div>
-          <div class="wave-you">36.5%</div>
-        </div>
-        <div class="wave-bars-deco" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-        </div>
-      </div>
-      <span class="scroll-hint">Scroll</span>
-    </section>
-
-    <!-- Slide 4 -->
-    <section class="slide" id="slide-4" data-slide="4">
-      <div class="slide-inner">
-        <p class="slide-tag">Peak Track</p>
-        <h2 class="slide-title">Busiest Session</h2>
-        <p class="slide-sub">The day our phones never stopped singing.</p>
-        <div class="peak-card">
-          <p class="peak-date">June 04, 2026</p>
-          <p class="peak-num">1,295</p>
-          <p class="peak-unit">Rapid Messages</p>
-          <div class="peak-breakdown">
-            <div>Her<span class="mono">758</span></div>
-            <div>You<span class="mono">537</span></div>
-          </div>
-        </div>
-      </div>
-      <span class="scroll-hint">Scroll</span>
-    </section>
-
-    <!-- Slide 5 -->
-    <section class="slide" id="slide-5" data-slide="5">
-      <div class="slide-inner">
-        <p class="slide-tag">Gold Vinyl</p>
-        <h2 class="slide-title">Her Words</h2>
-        <p class="slide-sub">October 30, 2025 · 700 words · Rank #3 longest message</p>
-        <div class="quote-scroll" id="quoteScroll">
-          <div class="quote-prelude"><span class="quote-label mono">Earlier that night</span><p>AAAGHWHBENDNCC Boom thank you babe mama EXACTLY INCANT DO SHIT NOO I’m just very tempted to pull ur panties and FINGER YOU (I’m not bc ik it’s too soon) hehehehehe my man ITS OKAY TRUST MEEEE you do other things perfectly:) ugh babe 😩 AHH EEEP I hope Babe your perfect Dude like Idk I wanna be connect to you Idk No sex, like straight be in you ,that’s why i squeeze you tight Imma beee to do it to you after NNN YAYAYAYYAAYY LETS BECOME ONE i love when you hug me tight i’m nowhere near perfect adriel lolll AAAHHHHH Babe Zoe inshanally you forgot my middle name :p can i give you a middle name hehehehhee</p></div><div class="quote-gold"><span class="quote-label mono">The validation</span><p>You are everything I ask for. I’ll even tell you, I pray for someone to be weird as me, and artist like me, loves being themselves like me. Your eyes make me feel emotions and you’ve seen it multiple times. I cried for someone like you, I want to cry in your arms.</p><p>When you get me CFA, when you make me gifts WHEN YOU DO YHE MOST LITERALLY LITTEST THINGS , I appreciate the mini details. Why do you think I always bring ur card with me? I love you and I love everything you do.</p><p>And I make sure I bring you up almost every time it’s a perfect time to talk about you. I think of you I pray abt you , I make sure you eat and even though I don’t have enough money, I’ll still offer to pay for ur food or anything, I’ll try my best to be there for you.</p><p>You are wife material and I KNOW it’s been one month, but I just feel something different about you. We clicked. Even the day I met you, I felt something inside me. Yes I get insecure. Yes I get sad. Yes I get emotional. Yes I have issues I need to work on.</p><p>But I’m trying to be a better person and better version of myself for you and me so we can last long. If something is wrong , we will talk. If we need each other, we will always be there for each other, no matter how little time we hang out with each other.</p><p>I want you to feel comfortable and loved and make sure that any overthinking u get abt me or us, I make sure I comfort you. I want to go past 4 years, I wanna grow old tgr. I want kids, I want to connect spirituality and mentally and physically.</p><p>I love you Zoe, and we will make sure we last long and we keep each other accountable so we grow together. You’re not perfect. But you’re perfect for me. That’s all that matters.</p><p>What’s ur middle name and GIVE ME NAME YGG i love you so much adriel:( that’s not a sad face it’s like a pout rn cause what the heck, you’re too sweet for me i really don’t deserve you. i’ve said this many times too, you’re perfect for me. you say a lot that i deserve better but you are my better. i’ve been waiting for someone to actually love me and actually care for me and you go beyond that and i can’t express how grateful i am to have you in my life. i know you’ve been through a lot and i know i can’t take that pain away, but i will do my absolute best to make you happier and make you feel loved because that’s truly what you deserve. you’re just a sweet and kind soul adriel and i don’t know what i did to get someone as perfect as you in my life. i do not care, in my eyes you are perfect. i told you my middle name the first day we met. i think.</p><p>GRRRR it’s madison:) that can be your middle name TOO AAAGHWHBENDNCC I LOVE YOU I LOVE YOU I LOVE YOU I LOVE YOU babe let’s just lowkey sleep tgr I want you to spoon me Zoe madison inshanally Adriel Madison Ventura babe let’s lowkey combine and become one entity HEHEHE I LOVE YOU</p></div>
-        </div>
-        <p class="quote-meta mono">MY ETERNAL LIFE 🤍 · Oct 30, 2025 10:25:23 PM</p>
-      </div>
-      <span class="scroll-hint">Scroll</span>
-    </section>
-
-    <!-- Slide 6 -->
-    <section class="slide" id="slide-6" data-slide="6">
-      <div class="slide-inner">
-        <p class="slide-tag">Encore</p>
-        <h2 class="slide-title">Leave a Note</h2>
-        <p class="slide-sub">Write something back — it lands live through Pageclip.</p>
-        <div class="encore-form-wrap">
-          <!-- Replace YOUR_SITE_KEY and encore-note with your Pageclip form endpoint -->
-          <form action="https://pageclip.co/YOUR_SITE_KEY/encore-note"
-                class="pageclip-form"
-                method="post">
-            <label for="noteName">From</label>
-            <input type="text" name="name" id="noteName" placeholder="Your name" required autocomplete="name">
-
-            <label for="noteMessage">Your love note</label>
-            <textarea name="message" id="noteMessage" placeholder="Write something only she would understand…" required></textarea>
-
-            <button type="submit" class="pageclip-form__submit encore-submit">
-              <span>Send to the vault 🤍</span>
-            </button>
+          <form action="https://pageclip.co/YOUR_SITE_KEY/encore-note" class="pageclip-form encore-form" method="post">
+            <input type="text" name="name" placeholder="Your name" required autocomplete="name">
+            <textarea name="message" placeholder="Leave a memory in the vault…" required></textarea>
+            <button type="submit" class="pageclip-form__submit">Send 🤍</button>
           </form>
-          <div class="pageclip-form__success" id="formSuccess">
-            <p>Received. She'll find it here. 🤍</p>
-          </div>
+          <div class="pageclip-form__success" id="formOk">Saved to the vault.</div>
         </div>
-        <p class="encore-note">MsMadison · GitHub Pages · Sep 28, 2026 🤍</p>
       </div>
-    </section>
+    </article>
 
-  </main>
+  </div>
+
+  <p class="tap-hint" id="tapHint">Tap right to continue · left to go back</p>
 
   <script src="https://s.pageclip.co/pageclip.js" charset="utf-8"></script>
   <script>
     (function () {
-      const story = document.getElementById("story");
-      const slides = [...document.querySelectorAll(".slide")];
-      const dots = [...document.querySelectorAll(".dot")];
-      const counter = document.getElementById("slideCounter");
-      const audio = document.getElementById("bgAudio");
-      const audioToggle = document.getElementById("audioToggle");
-      const audioFill = document.getElementById("audioFill");
-      const vinylDisc = document.getElementById("vinylDisc");
+      const TOTAL = 10;
+      const cards = [...document.querySelectorAll(".story-card")];
+      const progressRow = document.getElementById("progressRow");
+      const cardCounter = document.getElementById("cardCounter");
+      const tapBack = document.getElementById("tapBack");
+      const tapFwd = document.getElementById("tapFwd");
+      const tapHint = document.getElementById("tapHint");
+      let current = 0;
+      let progressTimer = null;
+
+      // Build progress segments
+      const segs = [];
+      for (let i = 0; i < TOTAL; i++) {
+        const seg = document.createElement("div");
+        seg.className = "progress-seg";
+        const fill = document.createElement("div");
+        fill.className = "progress-fill";
+        seg.appendChild(fill);
+        progressRow.appendChild(seg);
+        segs.push(seg);
+      }
 
       function pad(n) { return String(n).padStart(2, "0"); }
 
-      function updateUI() {
-        const mid = story.scrollTop + story.clientHeight / 2;
-        let active = 0;
-        slides.forEach((slide, i) => {
-          const top = slide.offsetTop;
-          const bottom = top + slide.offsetHeight;
-          if (mid >= top && mid < bottom) active = i;
-        });
-        dots.forEach((d, i) => d.classList.toggle("active", i === active));
-        counter.textContent = pad(active + 1) + " / " + pad(slides.length);
-        document.querySelectorAll(".scroll-hint").forEach((h, i) => {
-          h.style.display = i === active && active < slides.length - 1 ? "block" : "none";
-        });
+      function animateCounter(el, target, duration) {
+        if (!el || el.dataset.done === "1") return;
+        el.dataset.done = "1";
+        const start = performance.now();
+        function frame(now) {
+          const t = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - t, 3);
+          el.textContent = Math.floor(eased * target).toLocaleString();
+          if (t < 1) requestAnimationFrame(frame);
+          else el.textContent = target.toLocaleString();
+        }
+        requestAnimationFrame(frame);
       }
 
-      story.addEventListener("scroll", updateUI, { passive: true });
-      window.addEventListener("resize", updateUI);
-      updateUI();
+      function runCardAnimations(idx) {
+        if (idx === 1) animateCounter(document.getElementById("wordCounter"), 730204, 1800);
+        if (idx === 4) animateCounter(document.getElementById("msgCounter"), 1295, 1400);
+      }
 
-      audioToggle.addEventListener("click", async () => {
-        try {
-          if (audio.paused) {
-            await audio.play();
-            audioToggle.textContent = "❚❚";
-            audioToggle.setAttribute("aria-label", "Pause background music");
-            vinylDisc.classList.add("playing");
-          } else {
-            audio.pause();
-            audioToggle.textContent = "▶";
-            audioToggle.setAttribute("aria-label", "Play background music");
-            vinylDisc.classList.remove("playing");
+      function resetCardAnimations(idx) {
+        if (idx === 1) {
+          const el = document.getElementById("wordCounter");
+          el.dataset.done = "";
+          el.textContent = "0";
+        }
+        if (idx === 4) {
+          const el = document.getElementById("msgCounter");
+          el.dataset.done = "";
+          el.textContent = "0";
+        }
+      }
+
+      function updateProgress(animate) {
+        segs.forEach((seg, i) => {
+          seg.classList.remove("active", "done");
+          const fill = seg.querySelector(".progress-fill");
+          fill.style.width = "0%";
+          if (i < current) {
+            seg.classList.add("done");
+            fill.style.width = "100%";
+          } else if (i === current && animate) {
+            seg.classList.add("active");
+            clearTimeout(progressTimer);
+            requestAnimationFrame(() => { fill.style.width = "100%"; });
+          } else if (i === current) {
+            seg.classList.add("active");
           }
-        } catch (e) {
-          console.warn("Audio playback blocked or file missing. Add assets/background-instrumental.mp3 from Icons8.");
-        }
+        });
+        cardCounter.textContent = pad(current + 1) + " / " + pad(TOTAL);
+        tapHint.style.opacity = current === TOTAL - 1 ? "0" : "0.5";
+      }
+
+      function goTo(idx) {
+        if (idx < 0 || idx >= TOTAL || idx === current) return;
+        resetCardAnimations(current);
+        const prev = cards[current];
+        const next = cards[idx];
+        prev.classList.remove("active");
+        prev.classList.add("exit");
+        setTimeout(() => prev.classList.remove("exit"), 420);
+        current = idx;
+        next.classList.add("active");
+        updateProgress(true);
+        runCardAnimations(current);
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      tapFwd.addEventListener("click", next);
+      tapBack.addEventListener("click", prev);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
+        if (e.key === "ArrowLeft") prev();
       });
 
-      audio.addEventListener("timeupdate", () => {
-        if (audio.duration) {
-          audioFill.style.width = (audio.currentTime / audio.duration * 100) + "%";
-        }
-      });
-
-      document.querySelector(".pageclip-form").addEventListener("pageclip-submit", function () {
-        document.getElementById("formSuccess").classList.add("visible");
-      });
-
-      const ANNIVERSARY = new Date("2026-09-28T00:00:00");
-      const cdDays = document.getElementById("cdDays");
-      const cdHours = document.getElementById("cdHours");
-      const cdMins = document.getElementById("cdMins");
-      const cdSecs = document.getElementById("cdSecs");
-      const countdownEl = document.getElementById("countdown");
-      const countdownWrap = document.getElementById("countdownWrap");
-
-      function tickCountdown() {
-        const now = Date.now();
-        const diff = ANNIVERSARY - now;
+      // Countdown
+      const ANNIV = new Date("2026-09-28T00:00:00");
+      function tickCd() {
+        const diff = ANNIV - Date.now();
         if (diff <= 0) {
-          countdownEl.innerHTML = '<p class="countdown-done">One year. Still us. 🤍</p>';
+          document.getElementById("countdown").innerHTML = '<p class="subline" style="grid-column:1/-1;text-align:center;color:var(--seafoam-deep);font-weight:600;">One year. Still us. 🤍</p>';
           return;
         }
         const s = Math.floor(diff / 1000);
-        const d = Math.floor(s / 86400);
-        const h = Math.floor((s % 86400) / 3600);
-        const m = Math.floor((s % 3600) / 60);
-        const sec = s % 60;
-        cdDays.textContent = String(d);
-        cdHours.textContent = pad(h);
-        cdMins.textContent = pad(m);
-        cdSecs.textContent = pad(sec);
+        document.getElementById("cdD").textContent = Math.floor(s / 86400);
+        document.getElementById("cdH").textContent = pad(Math.floor((s % 86400) / 3600));
+        document.getElementById("cdM").textContent = pad(Math.floor((s % 3600) / 60));
+        document.getElementById("cdS").textContent = pad(s % 60);
       }
+      tickCd();
+      setInterval(tickCd, 1000);
 
-      tickCountdown();
-      setInterval(tickCountdown, 1000);
+      document.querySelector(".pageclip-form")?.addEventListener("pageclip-submit", () => {
+        document.getElementById("formOk").classList.add("show");
+      });
+
+      updateProgress(false);
+      runCardAnimations(0);
     })();
   </script>
 </body>
