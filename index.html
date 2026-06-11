@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#FAF7F0">
-  <meta name="description" content="Our First Year Wrapped — for Zoe">
+  <meta name="description" content="Your First Year Wrapped — made for Zoe">
   <meta property="og:title" content="MsMadison">
   <title>MsMadison</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,13 +56,25 @@
     }
     .bar-fill {
       height: 100%; width: 0%; background: var(--seafoam);
-      transition: width 0.35s var(--ease);
+      transition: none;
+      will-change: width;
+      position: relative;
     }
-    .bar.done .bar-fill { width: 100%; background: var(--seafoam); transition: none; }
     .bar.active .bar-fill {
-      width: 100%; background: var(--charcoal);
-      transition: width 0.52s var(--ease);
+      background: linear-gradient(90deg, var(--seafoam-deep), var(--seafoam) 55%, #b8ccc8);
+      box-shadow: 0 0 6px rgba(146, 168, 164, 0.55);
     }
+    .bar.active .bar-fill::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+      animation: barShimmer 1.4s ease-in-out infinite;
+    }
+    @keyframes barShimmer {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(220%); }
+    }
+    .bar.done .bar-fill { width: 100%; background: var(--seafoam); box-shadow: none; }
     .bar.future { opacity: 0.35; }
     .counter {
       margin-top: 0.4rem; text-align: center;
@@ -96,18 +108,111 @@
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
       padding: calc(2.6rem + var(--safe-t)) 1.1rem calc(1.2rem + var(--safe-b));
-      opacity: 0; transform: translateY(24px);
+      opacity: 0; transform: translateY(15px);
       pointer-events: none;
-      transition: opacity 0.36s var(--ease), transform 0.4s var(--ease);
+      transition: opacity 0.28s var(--ease), transform 0.28s var(--ease);
     }
     .card.on { opacity: 1; transform: translateY(0); pointer-events: auto; z-index: 20; }
-    .card.off { opacity: 0; transform: translateY(-14px); z-index: 10; }
+    .card.off { opacity: 0; transform: translateY(-12px); z-index: 10; }
     .inner { width: min(100%, 23.5rem); position: relative; }
-    .card.on .inner { animation: rise 0.48s var(--ease) both; }
+    .card.on .inner { animation: rise 0.28s var(--ease) both; }
     @keyframes rise {
-      from { opacity: 0; transform: translateY(14px); }
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .card.on .tag { animation: revealIn 0.42s var(--ease) 0.06s both; }
+    .card.on .h-xl,
+    .card.on .h-lg { animation: revealIn 0.48s var(--ease) 0.14s both; }
+    .card.on .sub,
+    .card.on .stamp,
+    .card.on .wish { animation: revealIn 0.45s var(--ease) 0.28s both; }
+    .card.on .stat-punch,
+    .card.on .eq-wrap,
+    .card.on .cass-slide,
+    .card.on .zine-hero,
+    .card.on .vinyl-box,
+    .card.on .share-frame { animation: revealIn 0.5s var(--ease) 0.22s both; }
+    .card.on .stat-lbl,
+    .card.on .eq-deco,
+    .card.on .stickers,
+    .card.on .night-meta { animation: revealIn 0.4s var(--ease) 0.38s both; }
+    @keyframes revealIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .num.stat-landed { animation: statPop 0.45s var(--ease); color: var(--seafoam-deep); }
+    @keyframes statPop {
+      0% { transform: scale(1); letter-spacing: -0.03em; }
+      45% { transform: scale(1.1); letter-spacing: 0.02em; }
+      100% { transform: scale(1); letter-spacing: -0.03em; }
+    }
+    .card.on .stat-punch .num,
+    .card.on .card-5 .zine .num {
+      animation: statLand 0.55s var(--ease) 0.2s both;
+    }
+    @keyframes statLand {
+      from { opacity: 0; transform: scale(0.88) translateY(8px); letter-spacing: 0.06em; }
+      to { opacity: 1; transform: scale(1) translateY(0); letter-spacing: -0.03em; }
+    }
+    .stat-punch.stat-flash { animation: punchFlash 0.6s var(--ease); }
+    @keyframes punchFlash {
+      0%, 100% { background: var(--paper); }
+      40% { background: rgba(146, 168, 164, 0.28); }
+    }
+    .card-5 .zine.peak-hit { animation: peakPulse 0.7s var(--ease); }
+    @keyframes peakPulse {
+      0%, 100% { box-shadow: var(--shadow-lg); transform: scale(1); }
+      35% { box-shadow: 0 0 0 3px rgba(146,168,164,0.35), var(--shadow-lg); transform: scale(1.03); }
+    }
+    .card-5 .num.stat-landed { animation: peakPop 0.55s var(--ease); }
+    @keyframes peakPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.14); color: var(--charcoal); }
+      100% { transform: scale(1); color: var(--seafoam-deep); }
+    }
+    .card-1 .collage { animation: collageDrift 9s ease-in-out infinite; }
+    @keyframes collageDrift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(1.5%, 0.8%) scale(1.02); }
+    }
+    .card.on .tracks li { animation: revealIn 0.38s var(--ease) both; }
+    .card.on .tracks li:nth-child(1) { animation-delay: 0.22s; }
+    .card.on .tracks li:nth-child(2) { animation-delay: 0.34s; }
+    .card.on .tracks li:nth-child(3) { animation-delay: 0.46s; }
+    .card-10.on .share-frame { animation: shareLock 0.65s var(--ease) 0.1s both; }
+    @keyframes shareLock {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .card-3 .eq-her { transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+    .card-3 .eq-you { transition: flex 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+
+    /* Stat cards — live background energy */
+    .card-2::before,
+    .card-3::before,
+    .card-4::before,
+    .card-5::before {
+      content: "";
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      opacity: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 30%, rgba(146,168,164,0.18), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 85% 75%, rgba(42,36,33,0.05), transparent 50%),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(42,36,33,0.012) 2px, rgba(42,36,33,0.012) 3px);
+      animation: bgDrift 8s ease-in-out infinite;
+    }
+    .card-2.on::before,
+    .card-3.on::before,
+    .card-4.on::before,
+    .card-5.on::before { opacity: 1; }
+    @keyframes bgDrift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(1%, -0.8%) scale(1.02); }
+    }
+    .card-2 .inner,
+    .card-3 .inner,
+    .card-4 .inner,
+    .card-5 .inner { position: relative; z-index: 1; }
 
     /* Zine primitives */
     .zine {
@@ -218,9 +323,9 @@
       display: flex; align-items: center; justify-content: center;
       font-family: "IBM Plex Mono", monospace;
       font-size: 0.68rem; font-weight: 600;
-      transition: width 1s var(--ease);
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .card.on .eq-her { width: 63.5%; }
+    .card-3.on .eq-her { width: 63.5%; }
     .eq-you {
       flex: 1; background: var(--charcoal); color: var(--cream);
       display: flex; align-items: center; justify-content: center;
@@ -393,6 +498,17 @@
       border: 2.5px solid var(--charcoal);
       box-shadow: 6px 8px 0 var(--seafoam);
       overflow: hidden;
+      outline: 3px solid rgba(146, 168, 164, 0.25);
+      outline-offset: 4px;
+    }
+    .screenshot-cue {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.5rem; letter-spacing: 0.16em;
+      text-transform: uppercase; text-align: center;
+      color: var(--seafoam-deep); margin-bottom: 0.55rem;
+      padding: 0.35rem 0.5rem;
+      border: 1px dashed var(--seafoam);
+      background: rgba(146, 168, 164, 0.12);
     }
     .share-badge {
       font-family: "IBM Plex Mono", monospace;
@@ -465,7 +581,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .card, .card.on .inner, .eq-her, .cass-slide, .reel, .vinyl, .eq-deco i, .stamp {
+      .card, .card.on .inner, .card.on .tag, .card.on .h-lg, .card.on .h-xl,
+      .eq-her, .cass-slide, .reel, .vinyl, .eq-deco i, .stamp, .card-1 .collage {
         transition: none !important; animation: none !important;
       }
     }
@@ -495,12 +612,12 @@
       <div class="inner">
         <div class="ghost-zine" aria-hidden="true"></div>
         <div class="zine zine-hero">
-          <span class="tape">OUR FIRST YEAR</span>
-          <h1 class="h-xl">Our First Year<br>Wrapped 🤍</h1>
-          <p class="sub">Adriel + Zoe</p>
+          <span class="tape">MADE FOR YOU</span>
+          <h1 class="h-xl">Your First Year<br>Wrapped 🤍</h1>
+          <p class="sub">Zoe + Adriel · the year you changed everything</p>
           <p class="mono" style="margin-top:0.5rem;font-size:0.62rem;letter-spacing:0.12em;color:var(--seafoam-deep);">09.28.25 → 09.28.26</p>
           <div id="cdWrap">
-            <p class="tag" style="margin-top:1rem;">countdown to one year</p>
+            <p class="tag" style="margin-top:1rem;">countdown to your year</p>
             <div class="cd-grid" id="cdGrid">
               <div class="cd-cell"><div class="cd-n" id="cdD">—</div><div class="cd-l">days</div></div>
               <div class="cd-cell"><div class="cd-n" id="cdH">—</div><div class="cd-l">hrs</div></div>
@@ -516,10 +633,10 @@
     <section class="card" data-i="1" id="c1">
       <div class="inner">
         <p class="tag">The Soundtrack Volume</p>
-        <h2 class="h-lg">We went heavy on the data frames.</h2>
+        <h2 class="h-lg">You went heavy on the data frames.</h2>
         <div class="stat-punch">
-          <div class="num" id="nWords">0</div>
-          <p class="stat-lbl" style="margin-top:0.5rem;">total words exchanged</p>
+          <div class="num" id="nWords" data-target="730204">—</div>
+          <p class="stat-lbl" style="margin-top:0.5rem;">words between you two</p>
         </div>
       </div>
     </section>
@@ -528,15 +645,15 @@
     <section class="card" data-i="2" id="c2">
       <div class="inner">
         <p class="tag">The Frequency Check</p>
-        <h2 class="h-lg">Who carried the frequencies?</h2>
+        <h2 class="h-lg">You carried the frequencies.</h2>
         <div class="eq-wrap">
           <div class="eq-bar">
-            <div class="eq-her">HER 63.5%</div>
-            <div class="eq-you">YOU 36.5%</div>
+            <div class="eq-her">YOU 63.5%</div>
+            <div class="eq-you">ADRIEL 36.5%</div>
           </div>
         </div>
         <div class="eq-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-        <p class="sub">Zoe talks 1.4x faster. You listened to every single note.</p>
+        <p class="sub">You talked 1.4x faster. Adriel listened to every single note.</p>
       </div>
     </section>
 
@@ -544,10 +661,10 @@
     <section class="card" data-i="3" id="c3">
       <div class="inner">
         <p class="tag">The Heavy Rotation</p>
-        <h2 class="h-lg" style="font-size:clamp(1.35rem,5.8vw,1.85rem);">106,124 Total Messages traded.</h2>
+        <h2 class="h-lg" style="font-size:clamp(1.35rem,5.8vw,1.85rem);">106,124 messages between you and Adriel.</h2>
         <div class="cass-slide">
           <div class="cass">
-            <div class="cass-lbl">ADRIEL + ZOE · HEAVY ROTATION · ∞</div>
+            <div class="cass-lbl">ZOE + ADRIEL · HEAVY ROTATION · ∞</div>
             <div class="cass-reels"><div class="reel"></div><div class="reel"></div></div>
           </div>
           <div class="stickers">
@@ -562,10 +679,10 @@
     <section class="card card-5" data-i="4" id="c4">
       <div class="inner">
         <p class="tag">The Busiest Track</p>
-        <h2 class="h-lg">Our Loudest Session 📢</h2>
+        <h2 class="h-lg">Your loudest day 📢</h2>
         <div class="stamp">JUNE 04, 2026</div>
         <div class="zine" style="text-align:center;">
-          <div class="num" id="nMsgs">0</div>
+          <div class="num" id="nMsgs" data-target="1295">—</div>
           <p class="stat-lbl" style="margin-top:0.45rem;">messages in 24 hours</p>
         </div>
       </div>
@@ -575,11 +692,11 @@
     <section class="card card-6" data-i="5" id="c5">
       <div class="inner">
         <p class="tag">The Late-Night Phase</p>
-        <h2 class="h-lg">When the text turns sweet.</h2>
+        <h2 class="h-lg">The goodnight he left for you.</h2>
         <div class="zine">
-          <!-- QUOTE: Sep 11, 2025 goodnight text — preserved lowercase voice -->
-          <p class="night-q">"thank youuu for such a cute first date i really enjoyed it..."</p>
-          <p class="night-meta">SEP 11, 2025 · GOODNIGHT</p>
+          <!-- QUOTE: Adriel → Zoe, Sep 11, 2025 — exact text from iMessage export -->
+          <p class="night-q">"Hey it's Adriel! This message is for just in case I don't say goodnight bc I knocked out from the drugs. Goodnight my thing 1 :) I really enjoyed our date and I'll see you in the morning"</p>
+          <p class="night-meta">SOMETHING ADRIEL SAID · SEP 11, 2025</p>
         </div>
       </div>
     </section>
@@ -588,7 +705,7 @@
     <section class="card" data-i="6" id="c6">
       <div class="inner">
         <p class="tag">The Comfort Track</p>
-        <h2 class="h-lg">Your Ultimate Go-To Habits.</h2>
+        <h2 class="h-lg">Your comfort tracks.</h2>
         <div class="zine">
           <p class="mono" style="font-size:0.5rem;letter-spacing:0.14em;margin-bottom:0.5rem;">ALBUM BACK · SIDE B</p>
           <ol class="tracks">
@@ -607,7 +724,7 @@
         <h2 class="h-lg">The Record You're Missing.</h2>
         <div class="vinyl-box"><div class="vinyl"></div></div>
         <p class="wish">"i wish i had a wave to earth one :("</p>
-        <p class="night-meta">JAN 24, 2026</p>
+        <p class="night-meta">SOMETHING YOU SAID · JAN 24, 2026 · HE REMEMBERED</p>
       </div>
     </section>
 
@@ -617,7 +734,7 @@
         <p class="tag">The Liner Notes</p>
         <h2 class="h-lg" style="font-size:clamp(1.35rem,5.5vw,1.75rem);">the holy grail.</h2>
         <div class="zine">
-          <div class="liner-head">OCT 30, 2025 · 700 WORDS · FOR ZOE 🤍</div>
+          <div class="liner-head">WHAT ADRIEL WROTE · OCT 30, 2025 · 700 WORDS · FOR YOU 🤍</div>
           <!-- PASTE ZONE: Full Oct 30, 2025 letter lives below in .scroll-box -->
           <div class="scroll-box" id="oct30Letter">
 <p>AAAGHWHBENDNCC Boom thank you babe mama EXACTLY INCANT DO SHIT NOO I’m just very tempted to pull ur panties and FINGER YOU (I’m not bc ik it’s too soon) hehehehehe my man ITS OKAY TRUST MEEEE you do other things perfectly:) ugh babe 😩 AHH EEEP I hope Babe your perfect Dude like Idk I wanna be connect to you Idk No sex, like straight be in you ,that’s why i squeeze you tight Imma beee to do it to you after NNN YAYAYAYYAAYY LETS BECOME ONE i love when you hug me tight i’m nowhere near perfect adriel lolll AAAHHHHH Babe Zoe inshanally you forgot my middle name :p can i give you a middle name hehehehhee <strong class="hl">You are everything I ask for.</strong> I’ll even tell you, <strong class="hl">I pray for someone to be weird as me</strong>, and artist like me, <strong class="hl">loves being themselves like me</strong>.</p><p>Your eyes make me feel emotions and you’ve seen it multiple times. <strong class="hl">I cried for someone like you</strong>, I want to cry in your arms. <strong class="hl">When you get me CFA</strong>, when you make me gifts WHEN YOU DO YHE MOST LITERALLY LITTEST THINGS , <strong class="hl">I appreciate the mini details</strong>.</p><p>Why do you think I always bring ur card with me? <strong class="hl">I love you</strong> and I love everything you do. And I make sure I bring you up almost every time it’s a perfect time to talk about you.</p><p>I think of you I pray abt you , I make sure you eat and even though I don’t have enough money, I’ll still offer to pay for ur food or anything, I’ll try my best to be there for you.</p><p>You are wife material and I KNOW it’s been one month, but I just feel something different about you. We clicked. Even the day I met you, I felt something inside me. Yes I get insecure. Yes I get sad. Yes I get emotional. Yes I have issues I need to work on.</p><p>But I’m trying to be a better person and better version of myself for you and me so we can last long. If something is wrong , we will talk. If we need each other, we will always be there for each other, no matter how little time we hang out with each other.</p><p>I want you to feel comfortable and loved and make sure that any overthinking u get abt me or us, I make sure I comfort you. I want to go past 4 years, I wanna grow old tgr.</p><p>I want kids, I want to connect spirituality and mentally and physically. <strong class="hl">I love you</strong> Zoe, and we will make sure we last long and we keep each other accountable so we grow together. You’re not perfect.</p><p>But you’re <strong class="hl">perfect for me</strong>. That’s all that matters.</p><p>What’s ur middle name and GIVE ME NAME YGG i love you so much adriel:( that’s not a sad face it’s like a pout rn cause what the heck, you’re too sweet for me i really don’t deserve you. i’ve said this many times too, you’re <strong class="hl">perfect for me</strong>. you say a lot that i deserve better but <strong class="hl">you are my better</strong>. i’ve been waiting for someone to actually love me and actually care for me and you go beyond that and i can’t express how grateful i am to have you in my life. i know you’ve been through a lot and i know i can’t take that pain away, but i will do my absolute best to make you happier and make you feel loved because that’s truly what you deserve. you’re just a sweet and kind soul adriel and i don’t know what i did to get someone as perfect as you in my life. i do not care, in my eyes you are perfect. i told you my middle name the first day we met. i think.</p><p>GRRRR it’s madison:) that can be your middle name TOO AAAGHWHBENDNCC I LOVE YOU I LOVE YOU I LOVE YOU I LOVE YOU babe let’s just lowkey sleep tgr I want you to spoon me Zoe madison inshanally Adriel Madison Ventura babe let’s lowkey combine and become one entity HEHEHE I LOVE YOU</p>
@@ -630,18 +747,19 @@
     <section class="card card-10" data-i="9" id="c9">
       <div class="inner">
         <p class="tag">The Encore</p>
-        <h2 class="h-lg" style="font-size:clamp(1.4rem,5.5vw,1.85rem);">Our Year, Wrapped 🤍</h2>
+        <h2 class="h-lg" style="font-size:clamp(1.4rem,5.5vw,1.85rem);">Your Year, Wrapped 🤍</h2>
         <div class="zine share-frame">
-          <div class="share-badge">Adriel + Zoe · Year One 🤍</div>
-          <p class="summary">one year of late nights, comfort food, and choosing each other.</p>
+          <p class="screenshot-cue">screenshot this · your year wrapped 🤍</p>
+          <div class="share-badge">ZOE + ADRIEL · YEAR ONE 🤍</div>
+          <p class="summary">one year of being known, chosen, and loved.</p>
           <div class="share-grid">
             <div class="cell w hero-stat"><div class="cv">730,204</div><div class="cl">words</div></div>
             <div class="cell"><div class="cv">106,124</div><div class="cl">messages</div></div>
-            <div class="cell"><div class="cv">63.5%</div><div class="cl">her frequency</div></div>
+            <div class="cell"><div class="cv">63.5%</div><div class="cl">your frequency</div></div>
             <div class="cell w"><div class="cv">JUN 04 · 1,295</div><div class="cl">loudest day</div></div>
             <div class="cell"><div class="cv">Wingstop</div><div class="cl">comfort #1</div></div>
             <div class="cell"><div class="cv">wave to earth</div><div class="cl">wishlist vinyl</div></div>
-            <div class="cell w"><div class="cv">09.28.26</div><div class="cl">one year of us</div></div>
+            <div class="cell w"><div class="cv">09.28.26</div><div class="cl">your year with adriel</div></div>
           </div>
           <!-- TODO(PAGECLIP): wire form action to https://pageclip.co/YOUR_KEY/encore-note -->
           <!-- TODO(PAGECLIP): add <script src="https://s.pageclip.co/pageclip.js"> when ready -->
@@ -660,11 +778,13 @@
 
   <script>
     /* ================================================================
-       STORY CONFIG — edit copy & stats here
+       STORY CONFIG
        ================================================================ */
     const STORY = {
       totalCards: 10,
       anniversary: new Date("2026-09-28T00:00:00"),
+      durations: [5000, 4000, 4000, 4500, 4000, 5000, 4500, 4500, 8000, 0],
+      pauseAfterManualMs: 5000,
       stats: {
         words: 730204,
         messages: 106124,
@@ -676,16 +796,27 @@
     };
 
     /* ================================================================
-       STORY ENGINE
+       AUTOPLAY WRAPPED STORY ENGINE
        ================================================================ */
     (function () {
       const cards = [...document.querySelectorAll(".card")];
       const barsRoot = document.getElementById("bars");
       const counter = document.getElementById("counter");
       const hint = document.getElementById("hint");
+      const letter = document.getElementById("oct30Letter");
       let idx = 0;
       let navLock = false;
+      let autoplayOn = true;
+      let readingPause = false;
+      let pauseUntil = 0;
+      let advanceTimer = null;
+      let progressRAF = null;
+      let scrollIdleTimer = null;
+      let cardEpoch = 0;
+      let cardStartedAt = 0;
+      let pausedElapsed = 0;
       const bars = [];
+      const countTokens = new WeakMap();
 
       for (let i = 0; i < STORY.totalCards; i++) {
         const b = document.createElement("div");
@@ -697,70 +828,186 @@
 
       function pad(n) { return String(n).padStart(2, "0"); }
 
-      function paintBars() {
+      function clearPlaybackTimers() {
+        if (advanceTimer) clearTimeout(advanceTimer);
+        if (progressRAF) cancelAnimationFrame(progressRAF);
+        advanceTimer = null;
+        progressRAF = null;
+      }
+
+      function setBarFill(i, pct) {
+        const f = bars[i]?.querySelector(".bar-fill");
+        if (f) f.style.width = Math.max(0, Math.min(100, pct)) + "%";
+      }
+
+      function paintBarsStatic() {
         bars.forEach((b, i) => {
           b.classList.remove("done", "active", "future");
-          const f = b.querySelector(".bar-fill");
-          f.style.width = "0%";
-          if (i < idx) { b.classList.add("done"); f.style.width = "100%"; }
-          else if (i === idx) { b.classList.add("active"); requestAnimationFrame(() => { f.style.width = "100%"; }); }
-          else { b.classList.add("future"); }
+          if (i < idx) {
+            b.classList.add("done");
+            setBarFill(i, 100);
+          } else if (i === idx) {
+            b.classList.add("active");
+            setBarFill(i, 0);
+          } else {
+            b.classList.add("future");
+            setBarFill(i, 0);
+          }
         });
         counter.textContent = pad(idx + 1) + " / " + pad(STORY.totalCards);
         hint.style.opacity = idx === STORY.totalCards - 1 ? "0" : "0.45";
-        if (idx === 8) hint.textContent = "scroll the letter · tap edges to turn page";
-        else if (idx === 9) hint.textContent = "screenshot this · tap edges to navigate";
-        else hint.textContent = "tap right · go back left";
+        if (idx === 8) hint.textContent = "reading · scroll center · tap edges";
+        else if (idx === 9) hint.textContent = "screenshot · your year wrapped 🤍";
+        else if (readingPause || Date.now() < pauseUntil) hint.textContent = "paused · tap right to continue";
+        else hint.textContent = "playing · tap right to skip";
         document.body.classList.toggle("scroll-mode", idx === 8);
         document.body.classList.toggle("vault-mode", idx === 9);
         barsRoot.setAttribute("aria-valuenow", idx + 1);
       }
 
-      const animated = new Set();
-      function countUp(el, target, ms) {
-        if (!el || animated.has(el)) return;
-        animated.add(el);
+      function isPaused() {
+        return readingPause || Date.now() < pauseUntil;
+      }
+
+      function tickProgress() {
+        const dur = STORY.durations[idx];
+        if (!dur || idx === 9) return;
+        if (isPaused()) {
+          progressRAF = requestAnimationFrame(tickProgress);
+          return;
+        }
+        const elapsed = pausedElapsed + (performance.now() - cardStartedAt);
+        const pct = Math.min(elapsed / dur, 1) * 100;
+        setBarFill(idx, pct);
+        if (pct < 1) progressRAF = requestAnimationFrame(tickProgress);
+      }
+
+      function scheduleAutoplay() {
+        clearPlaybackTimers();
+        if (idx === 9 || !autoplayOn) return;
+        const dur = STORY.durations[idx];
+        if (!dur) return;
+
+        cardStartedAt = performance.now();
+        pausedElapsed = 0;
+        progressRAF = requestAnimationFrame(tickProgress);
+
+        advanceTimer = setTimeout(() => {
+          if (idx >= 9 || isPaused()) return;
+          go(idx + 1, { auto: true });
+        }, dur);
+      }
+
+      function pauseAutoplay(ms) {
+        if (idx === 9) return;
+        const dur = STORY.durations[idx];
+        if (!dur) return;
+        pausedElapsed += performance.now() - cardStartedAt;
+        pauseUntil = Date.now() + ms;
+        clearPlaybackTimers();
+        setTimeout(() => {
+          if (idx === 9) return;
+          cardStartedAt = performance.now();
+          scheduleAutoplay();
+        }, ms);
+      }
+
+      function cancelCount(el) {
+        if (!el) return;
+        const token = countTokens.get(el);
+        if (token) token.cancelled = true;
+        el.classList.remove("stat-landed");
+      }
+
+      function countUp(el, target, ms, onDone) {
+        if (!el) return;
+        cancelCount(el);
+        const token = { cancelled: false };
+        countTokens.set(el, token);
+        el.textContent = "0";
         const t0 = performance.now();
         function frame(t) {
+          if (token.cancelled) return;
           const p = Math.min((t - t0) / ms, 1);
           const e = 1 - Math.pow(1 - p, 3);
           el.textContent = Math.floor(e * target).toLocaleString();
-          if (p < 1) requestAnimationFrame(frame);
-          else el.textContent = target.toLocaleString();
+          if (p < 1) {
+            requestAnimationFrame(frame);
+          } else {
+            el.textContent = target.toLocaleString();
+            el.classList.add("stat-landed");
+            if (onDone) onDone();
+          }
         }
         requestAnimationFrame(frame);
       }
 
-      function resetAnim(cardIndex) {
+      function flashEl(el, cls) {
+        if (!el) return;
+        el.classList.remove(cls);
+        void el.offsetWidth;
+        el.classList.add(cls);
+      }
+
+      function resetCardVisuals(cardIndex) {
         if (cardIndex === 1) {
           const el = document.getElementById("nWords");
-          animated.delete(el);
-          el.textContent = "0";
+          cancelCount(el);
+          el.textContent = "—";
+          const punch = document.querySelector(".card-2 .stat-punch");
+          if (punch) punch.classList.remove("stat-flash");
         }
         if (cardIndex === 4) {
           const el = document.getElementById("nMsgs");
-          animated.delete(el);
-          el.textContent = "0";
+          cancelCount(el);
+          el.textContent = "—";
+          const peak = document.querySelector(".card-5 .zine");
+          if (peak) peak.classList.remove("peak-hit");
         }
       }
 
-      function runAnim(cardIndex) {
-        if (cardIndex === 1) countUp(document.getElementById("nWords"), STORY.stats.words, 1700);
-        if (cardIndex === 4) countUp(document.getElementById("nMsgs"), STORY.stats.busiestCount, 1300);
+      function runCardAnimations(cardIndex) {
+        const epoch = cardEpoch;
+        if (cardIndex === 1) {
+          setTimeout(() => {
+            if (epoch !== cardEpoch) return;
+            countUp(document.getElementById("nWords"), STORY.stats.words, 1400, () => {
+              flashEl(document.querySelector(".card-2 .stat-punch"), "stat-flash");
+            });
+          }, 180);
+        }
+        if (cardIndex === 4) {
+          setTimeout(() => {
+            if (epoch !== cardEpoch) return;
+            countUp(document.getElementById("nMsgs"), STORY.stats.busiestCount, 1100, () => {
+              flashEl(document.querySelector(".card-5 .zine"), "peak-hit");
+            });
+          }, 200);
+        }
       }
 
-      function go(next) {
+      function go(next, opts = {}) {
+        const { auto = false } = opts;
         if (navLock || next < 0 || next >= STORY.totalCards || next === idx) return;
         navLock = true;
-        setTimeout(() => { navLock = false; }, 360);
-        resetAnim(idx);
+        setTimeout(() => { navLock = false; }, 320);
+
+        clearPlaybackTimers();
+        resetCardVisuals(idx);
+        cardEpoch++;
+
         cards[idx].classList.remove("on");
         cards[idx].classList.add("off");
         setTimeout(() => cards[idx].classList.remove("off"), 400);
+
         idx = next;
+        if (idx !== 8) readingPause = false;
         cards[idx].classList.add("on");
-        paintBars();
-        runAnim(idx);
+        paintBarsStatic();
+        runCardAnimations(idx);
+
+        if (!auto) pauseAutoplay(STORY.pauseAfterManualMs);
+        else if (idx !== 9) scheduleAutoplay();
       }
 
       document.getElementById("tapR").addEventListener("click", () => go(idx + 1));
@@ -774,13 +1021,36 @@
         if (e.key === "ArrowLeft" && !typing) go(idx - 1);
       });
 
+      /* Card 9 — pause autoplay while reading */
+      if (letter) {
+        const resumeReading = () => {
+          clearTimeout(scrollIdleTimer);
+          scrollIdleTimer = setTimeout(() => {
+            readingPause = false;
+            if (idx === 8 && autoplayOn) scheduleAutoplay();
+          }, 2200);
+        };
+        letter.addEventListener("scroll", () => {
+          if (idx !== 8) return;
+          readingPause = true;
+          clearPlaybackTimers();
+          resumeReading();
+        }, { passive: true });
+        letter.addEventListener("touchstart", () => {
+          if (idx !== 8) return;
+          readingPause = true;
+          clearPlaybackTimers();
+        }, { passive: true });
+        letter.addEventListener("touchend", resumeReading, { passive: true });
+      }
+
       /* Countdown — Sep 28, 2026 */
       let cdTimer = null;
       function tickCd() {
         const diff = STORY.anniversary - Date.now();
         const wrap = document.getElementById("cdWrap");
         if (diff <= 0) {
-          wrap.innerHTML = '<p class="celebrate">We made it to one year 🤍<br><span style="font-size:0.85rem;font-weight:500;">One year of us.</span></p>';
+          wrap.innerHTML = '<p class="celebrate">You made it to one year 🤍<br><span style="font-size:0.85rem;font-weight:500;">Your year with Adriel.</span></p>';
           if (cdTimer) clearInterval(cdTimer);
           return;
         }
@@ -795,7 +1065,8 @@
       tickCd();
       cdTimer = setInterval(tickCd, 1000);
 
-      paintBars();
+      paintBarsStatic();
+      setTimeout(() => scheduleAutoplay(), 650);
     })();
   </script>
 </body>
