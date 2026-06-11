@@ -1,0 +1,12 @@
+# Private relationship data — never deploy
+MY love messages.html
+relationship_insights.txt
+anniversary_milestones_output.txt
+analysis_data.json
+analysis_output.txt
+
+# Local tooling & scripts
+extract_*.py
+analyze_chat.py
+.cursor/
+.DS_Store
