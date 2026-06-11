@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <!-- Drop promise-ring.glb in assets/ — model-viewer loads it on card 14 reveal -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <style>
     :root {
       --bg: #ede8df;
@@ -626,7 +628,7 @@
       transform: translate3d(0, 10px, 0) scale(0.96);
       will-change: transform, opacity;
     }
-    .ring-reveal-wrap.opened .ring-visual {
+    .ring-reveal-wrap.opened .ring-visual-slot .ring-visual {
       animation: ringPieceIn 0.75s var(--ease) 0.32s forwards, ringFloat 4s ease-in-out 1.2s infinite;
     }
     .ring-reveal-wrap.opened .ring-unlock { animation: ringPieceIn 0.55s var(--ease) 0.52s forwards; }
@@ -635,8 +637,24 @@
     @keyframes ringPieceIn {
       to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
     }
-    .ring-visual {
+    .ring-visual-slot {
       width: 5.5rem; height: 5.5rem; margin: 0 auto 0.85rem;
+      position: relative;
+    }
+    .ring-model {
+      width: 100%; height: 100%;
+      --poster-color: transparent;
+      background: transparent;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .ring-model.ready { opacity: 1; pointer-events: auto; }
+    .ring-model.ready + .ring-visual { display: none; }
+    .ring-reveal-wrap.opened .ring-model.ready {
+      animation: ringPieceIn 0.75s var(--ease) 0.32s forwards, ringFloat 4s ease-in-out 1.2s infinite;
+    }
+    .ring-visual {
+      width: 100%; height: 100%;
       border-radius: 50%;
       background:
         radial-gradient(circle at 35% 28%, rgba(255,255,255,0.35), transparent 35%),
@@ -788,6 +806,9 @@
       background: transparent; color: #fff; padding: 0.2rem 0.45rem;
       cursor: pointer; border-radius: 1px;
     }
+    .edit-tools { display: none; gap: 0.25rem; align-items: center; }
+    .edit-tools.on { display: flex; }
+    body.edit-mode #oct30Letter p { outline: 1px dashed rgba(125, 150, 137, 0.45); outline-offset: 2px; }
     body.edit-mode [contenteditable="true"] {
       outline: 1px dashed var(--sage); outline-offset: 3px; cursor: text;
     }
@@ -1040,7 +1061,24 @@
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
           </div>
           <div class="ring-revealed" id="ringRevealed">
-            <div class="ring-visual" aria-hidden="true"></div>
+            <div class="ring-visual-slot">
+              <!-- Replace src when your .glb is in assets/promise-ring.glb -->
+              <model-viewer
+                id="ringModel"
+                class="ring-model"
+                src="assets/promise-ring.glb"
+                alt="Promise ring"
+                auto-rotate
+                rotation-per-second="28deg"
+                camera-orbit="0deg 75deg 105%"
+                shadow-intensity="0.6"
+                exposure="1"
+                loading="lazy"
+                touch-action="pan-y"
+                aria-label="Promise ring"
+              ></model-viewer>
+              <div class="ring-visual ring-fallback" aria-hidden="true"></div>
+            </div>
             <p class="ring-unlock">YOU'VE UNLOCKED A PROMISE RING</p>
             <p class="ring-rare">ULTRA RARE</p>
             <p class="ring-subline">for the girl who changed everything</p>
@@ -1088,6 +1126,10 @@
   </div>
   <div class="edit-bar" id="editBar" hidden>
     <span>edit mode on</span>
+    <span class="edit-tools" id="editLetterTools">
+      <button type="button" id="editParaAdd" title="Add liner note paragraph">+ ¶</button>
+      <button type="button" id="editParaRem" title="Remove last paragraph">− ¶</button>
+    </span>
     <button type="button" id="editSave">Save</button>
     <button type="button" id="editExit">Exit</button>
   </div>
@@ -1181,6 +1223,13 @@
         document.body.classList.toggle("scroll-mode", idx === STORY.letterIdx);
         document.body.classList.toggle("ring-mode", idx === STORY.ringIdx && !ringRevealed);
         barsRoot.setAttribute("aria-valuenow", idx + 1);
+        syncEditTools();
+      }
+
+      function syncEditTools() {
+        const tools = document.getElementById("editLetterTools");
+        if (!tools) return;
+        tools.classList.toggle("on", document.body.classList.contains("edit-mode") && idx === STORY.letterIdx);
       }
 
       function isPaused() {
@@ -1448,6 +1497,7 @@
           const raw = localStorage.getItem(EDIT_KEY);
           if (!raw) return;
           const map = JSON.parse(raw);
+          if (map.__letter && letter) letter.innerHTML = map.__letter;
           collectEditables();
           editables.forEach((el) => {
             if (map[el.dataset.editId]) el.innerHTML = map[el.dataset.editId];
@@ -1459,7 +1509,16 @@
         collectEditables();
         const map = {};
         editables.forEach((el) => { map[el.dataset.editId] = el.innerHTML; });
+        if (letter) map.__letter = letter.innerHTML;
         try { localStorage.setItem(EDIT_KEY, JSON.stringify(map)); } catch (_) { /* storage blocked */ }
+      }
+
+      function setLetterParasEditable(on) {
+        if (!letter) return;
+        letter.querySelectorAll("p").forEach((p) => {
+          p.contentEditable = on ? "true" : "false";
+          if (!on) p.blur();
+        });
       }
 
       function setEditMode(on) {
@@ -1470,6 +1529,8 @@
           el.contentEditable = on ? "true" : "false";
           if (!on) el.blur();
         });
+        setLetterParasEditable(on);
+        syncEditTools();
         if (on) {
           modalPause = false;
           clearPlaybackTimers();
@@ -1513,6 +1574,23 @@
       });
       document.getElementById("editExit")?.addEventListener("click", () => setEditMode(false));
       document.getElementById("editSave")?.addEventListener("click", saveEdits);
+      document.getElementById("editParaAdd")?.addEventListener("click", () => {
+        if (!letter || !document.body.classList.contains("edit-mode")) return;
+        const p = document.createElement("p");
+        p.textContent = "New paragraph…";
+        if (document.body.classList.contains("edit-mode")) p.contentEditable = "true";
+        letter.appendChild(p);
+        p.focus();
+      });
+      document.getElementById("editParaRem")?.addEventListener("click", () => {
+        if (!letter || !document.body.classList.contains("edit-mode")) return;
+        const ps = letter.querySelectorAll("p");
+        if (ps.length > 1) ps[ps.length - 1].remove();
+      });
+
+      const ringModel = document.getElementById("ringModel");
+      ringModel?.addEventListener("load", () => ringModel.classList.add("ready"));
+      ringModel?.addEventListener("error", () => ringModel.classList.remove("ready"));
 
       loadEdits();
       paintBarsStatic();
