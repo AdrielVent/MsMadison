@@ -836,6 +836,174 @@
       .card.on .polaroid { opacity: 1; transform: translate3d(0, var(--lift), 0) rotate(var(--rot)); }
       .ring-reveal-wrap.opened .ring-revealed > * { opacity: 1; transform: none; }
     }
+
+    /* ─── LIBRARY CHECKOUT CARD (Card 5) ─── */
+    .lib-pocket-wrap { margin-top: 1rem; position: relative; }
+    .lib-pocket {
+      position: relative; width: 100%; background: var(--paper);
+      border: 1.5px solid rgba(27,59,111,0.22); border-radius: 2px;
+      box-shadow: var(--shadow); overflow: hidden; min-height: 9rem;
+    }
+    .lib-pocket::after {
+      content: ""; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 36%; background: var(--container);
+      border-top: 1.5px dashed rgba(146,168,164,0.65); z-index: 1;
+    }
+    .lib-card {
+      position: relative; z-index: 2;
+      padding: 0.7rem 0.85rem 0.6rem;
+      transform: translateY(110%);
+      transition: transform 0.9s cubic-bezier(0.25,1,0.5,1);
+      background: var(--paper); border-bottom: 1.5px solid rgba(27,59,111,0.1);
+    }
+    .card.on .lib-card { transform: translateY(0); }
+    .lib-header {
+      font-family: var(--sans); font-size: 0.4rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--border); padding-bottom: 0.28rem; margin-bottom: 0.45rem;
+    }
+    .lib-title {
+      font-family: var(--serif); font-size: clamp(0.88rem,3.8vw,1.05rem);
+      font-weight: 600; font-style: italic; color: var(--navy);
+      margin-bottom: 0.4rem; line-height: 1.25;
+    }
+    .lib-traits { list-style: none; display: flex; flex-direction: column; gap: 0.2rem; }
+    .lib-traits li {
+      font-family: var(--sans); font-size: 0.5rem; letter-spacing: 0.04em;
+      color: var(--secondary); display: flex; align-items: flex-start; gap: 0.3rem;
+    }
+    .lib-traits li::before { content: "✓"; color: var(--sage); flex-shrink: 0; }
+    .lib-stamps { display: flex; gap: 0.3rem; margin-top: 0.45rem; flex-wrap: wrap; }
+    .lib-stamp {
+      font-family: var(--sans); font-size: 0.37rem; letter-spacing: 0.1em;
+      text-transform: uppercase; border: 1.5px solid var(--sage); color: var(--sage);
+      padding: 0.15rem 0.28rem; border-radius: 1px;
+    }
+    .lib-pocket-label {
+      position: absolute; bottom: 0.4rem; left: 0; right: 0; text-align: center; z-index: 2;
+      font-family: var(--sans); font-size: 0.37rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    /* ─── THERMAL RECEIPT (Card 12) ─── */
+    .receipt-outer { margin-top: 0.85rem; display: flex; flex-direction: column; align-items: center; }
+    .receipt {
+      width: 100%; max-width: 22rem;
+      background: var(--paper); border: 1px solid var(--border); box-shadow: var(--shadow);
+      padding: 0.85rem 1rem 0; position: relative; overflow: hidden;
+      max-height: 2.2rem;
+      transition: max-height 1.5s cubic-bezier(0.25,1,0.5,1);
+    }
+    .card.on .receipt { max-height: 28rem; }
+    .receipt-top {
+      font-family: var(--sans); font-size: 0.38rem; letter-spacing: 0.16em;
+      text-transform: uppercase; text-align: center; color: var(--muted);
+      border-bottom: 1px dashed var(--border); padding-bottom: 0.4rem; margin-bottom: 0.5rem;
+    }
+    .receipt-merchant {
+      font-family: var(--serif); font-size: 0.88rem; font-weight: 600;
+      text-align: center; color: var(--navy); margin-bottom: 0.35rem;
+    }
+    .receipt-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 0.26rem 0; border-bottom: 1px dotted rgba(27,59,111,0.1); gap: 0.4rem;
+    }
+    .receipt-rank {
+      font-family: var(--sans); font-size: 0.41rem; letter-spacing: 0.08em;
+      color: var(--sage); flex-shrink: 0; min-width: 1.1rem;
+    }
+    .receipt-item {
+      font-family: var(--sans); font-size: 0.51rem; letter-spacing: 0.03em;
+      color: var(--navy); flex: 1;
+    }
+    .receipt-price {
+      font-family: var(--sans); font-size: 0.43rem; letter-spacing: 0.05em;
+      color: var(--muted); text-align: right; flex-shrink: 0;
+    }
+    .receipt-total {
+      margin-top: 0.4rem; border-top: 2px solid rgba(27,59,111,0.18);
+      padding: 0.32rem 0 0.55rem;
+      font-family: var(--serif); font-style: italic; font-size: 0.8rem;
+      text-align: center; color: var(--pink);
+    }
+    .receipt-tear {
+      width: 100%; height: 14px; flex-shrink: 0;
+      background:
+        linear-gradient(135deg, var(--bg) 33.33%, transparent 33.33%) 0 0,
+        linear-gradient(225deg, var(--bg) 33.33%, transparent 33.33%) 0 0;
+      background-color: var(--paper);
+      background-size: 10px 14px; background-repeat: repeat-x;
+      margin-top: -1px;
+    }
+
+    /* ─── OPEN WHEN ENVELOPES (Bridge Card) ─── */
+    .envelopes-wrap { margin-top: 0.9rem; display: flex; flex-direction: column; gap: 0.7rem; }
+    .env-item { position: relative; }
+    .env-box {
+      position: relative; width: 100%; min-height: 3.6rem;
+      background: var(--paper); border: 1.5px solid rgba(27,59,111,0.18);
+      box-shadow: var(--shadow-soft); cursor: pointer; overflow: hidden;
+      border-radius: 1px; -webkit-tap-highlight-color: transparent;
+    }
+    .env-flap {
+      position: absolute; top: 0; left: 0; right: 0; height: 0;
+      border-left: 50vw solid transparent; border-right: 50vw solid transparent;
+      border-top: 1.35rem solid rgba(146,168,164,0.5);
+      transform-origin: top center;
+      transition: transform 0.45s cubic-bezier(0.25,1,0.5,1); z-index: 3; pointer-events: none;
+    }
+    .env-item.opened .env-flap { transform: rotateX(180deg); }
+    .env-label {
+      position: absolute; top: 1.4rem; left: 0; right: 0; text-align: center;
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(0.72rem,3vw,0.86rem); color: var(--navy);
+      padding: 0.25rem 0.65rem; z-index: 2; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .env-note {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      padding: 0.5rem 0.8rem; background: var(--container);
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(0.66rem,2.8vw,0.8rem); color: var(--secondary);
+      text-align: center; line-height: 1.45; opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.38s ease 0.25s, transform 0.38s ease 0.25s;
+      z-index: 1; pointer-events: none;
+    }
+    .env-item.opened .env-label { opacity: 0; }
+    .env-item.opened .env-note { opacity: 1; transform: translateY(0); }
+    .env-tape {
+      position: absolute; top: -3px; left: 50%; transform: translateX(-50%) rotate(-1.2deg);
+      width: 2rem; height: 0.5rem; background: rgba(146,168,164,0.4);
+      z-index: 4; pointer-events: none;
+    }
+    .env-all-hint {
+      text-align: center; margin-top: 0.35rem;
+      font-family: var(--sans); font-size: 0.42rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    /* block tap navigation while env card active and not all opened */
+    body.env-mode .tap-r { pointer-events: none; opacity: 0; }
+
+    /* ─── POLAROID HOLD-TO-REVEAL (Card 11) ─── */
+    .polaroid.inspecting {
+      z-index: 10 !important;
+      transform: translate3d(0, calc(var(--lift) - 5px), 0) rotate(calc(var(--rot) * 0.35)) scale(1.1) !important;
+      box-shadow: 0 14px 36px rgba(27,59,111,0.2) !important;
+      transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease);
+    }
+    .polaroid-note {
+      position: absolute; inset: 0; background: var(--container);
+      display: flex; align-items: center; justify-content: center;
+      padding: 0.3rem; opacity: 0;
+      transition: opacity 0.2s ease 0.1s;
+      pointer-events: none; border-radius: 1px; z-index: 2;
+    }
+    .polaroid.inspecting .polaroid-note { opacity: 1; }
+    .polaroid-note p {
+      font-family: var(--serif); font-style: italic;
+      font-size: 0.44rem; line-height: 1.4; color: var(--secondary); text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -915,19 +1083,32 @@
 
     <section class="card card-5" data-i="4" id="c4">
       <div class="inner">
-        <p class="tag">Your Top Phrases</p>
-        <h2 class="h-lg">The weird little language we made together.</h2>
-        <p class="sub" style="margin-bottom:0.5rem;">our shared language, cute, stupid, and only ours.</p>
-        <div class="vocab-grid">
-          <div class="vocab-cell"><div class="vocab-n">229</div><div class="vocab-l">beaner</div></div>
-          <div class="vocab-cell"><div class="vocab-n">197</div><div class="vocab-l">twin</div></div>
-          <div class="vocab-cell"><div class="vocab-n">90</div><div class="vocab-l">meep</div></div>
-          <div class="vocab-cell"><div class="vocab-n">83</div><div class="vocab-l">perhaps</div></div>
-          <div class="vocab-cell"><div class="vocab-n">45</div><div class="vocab-l">kith</div></div>
+        <p class="tag">You &amp; Me, Typed Up</p>
+        <h2 class="h-lg">The Stay-Up-Till-2AM Reassurers.</h2>
+        <p class="sub" style="margin-bottom:0.65rem;">Checked out: Sep 28, 2025. Due back: never.</p>
+        <div class="lib-pocket-wrap">
+          <div class="lib-pocket">
+            <div class="lib-card">
+              <div class="lib-header">RELATIONSHIP CARD · ADRIEL &amp; ZOE · YEAR ONE</div>
+              <div class="lib-title">"The Stay-Up-Till-2AM Reassurers"</div>
+              <ul class="lib-traits">
+                <li>Most likely to turn a bad day around</li>
+                <li>Top comfort food enablers (Wingstop × Tacos)</li>
+                <li>First to say "you okay?" at 2am</li>
+                <li>229 "beaner"s. 197 "twin"s. Endless.</li>
+              </ul>
+              <div class="lib-stamps">
+                <span class="lib-stamp">Sep 28, 2025</span>
+                <span class="lib-stamp">Oct 30, 2025</span>
+                <span class="lib-stamp">Jun 04, 2026</span>
+              </div>
+            </div>
+            <div class="lib-pocket-label">ISSUED TO: ZOE · LATE RETURNS FORGIVEN</div>
+          </div>
         </div>
-        <p class="vocab-flash" id="vocabFlash">Perhaps.</p>
       </div>
     </section>
+
 
     <section class="card card-6" data-i="5" id="c5">
       <div class="inner">
@@ -993,34 +1174,77 @@
 
     <section class="card card-11" data-i="10" id="c10">
       <div class="inner">
-        <p class="tag">Photo Album</p>
+        <p class="tag">Press &amp; hold any photo</p>
         <h2 class="h-lg">Moments I saved for you.</h2>
-        <p class="sub">little snapshots, big feelings.</p>
-        <div class="scrapbook" aria-label="Photo album placeholders">
-          <div class="polaroid p1"><span>first date</span></div>
-          <div class="polaroid p2"><span>mirror pic</span></div>
-          <div class="polaroid p3"><span>us being stupid</span></div>
-          <div class="polaroid p4"><span>favorite memory</span></div>
-          <div class="polaroid p5"><span>random pretty moment</span></div>
-          <div class="polaroid p6"><span>one of my favorites</span></div>
+        <p class="sub">hold a photo to see what I was thinking.</p>
+        <div class="scrapbook" aria-label="Photo album">
+          <div class="polaroid p1"><div class="polaroid-note"><p>Our first date. I was so nervous but you made it easy.</p></div><span>first date</span></div>
+          <div class="polaroid p2"><div class="polaroid-note"><p>You looked so good. I stared too long.</p></div><span>mirror pic</span></div>
+          <div class="polaroid p3"><div class="polaroid-note"><p>Being stupid with you is my favorite thing.</p></div><span>us being stupid</span></div>
+          <div class="polaroid p4"><div class="polaroid-note"><p>I replay this one a lot.</p></div><span>favorite memory</span></div>
+          <div class="polaroid p5"><div class="polaroid-note"><p>You didn't know I was watching. You were perfect.</p></div><span>pretty moment</span></div>
+          <div class="polaroid p6"><div class="polaroid-note"><p>This one makes me smile every single time.</p></div><span>my favorite</span></div>
         </div>
       </div>
     </section>
 
-    <section class="card card-12 card-premium" data-i="11" id="c11">
+    <section class="card card-12" data-i="11" id="c11">
       <div class="inner">
-        <p class="tag">I Remembered</p>
-        <h2 class="h-lg">The first gift I ever got you.</h2>
-        <p class="sub" style="margin-bottom:0.75rem;">It was never small to me.</p>
-        <div class="zine">
-          <p class="quote-hero">"remember how I got u a smoothie from freshens the first or second time we met?"</p>
-          <p class="night-meta">SOMETHING I SAID · OCT 21, 2025</p>
-          <p class="context-note">You once said: "thank you so much for the smoothie :)"</p>
+        <p class="tag">Our Comfort Runs</p>
+        <h2 class="h-lg">Every craving, every time.</h2>
+        <p class="sub" style="margin-bottom:0.5rem;">the things that always made it better.</p>
+        <div class="receipt-outer">
+          <div class="receipt">
+            <div class="receipt-top">LOVERS COMFORT DINER · EST. SEP 2025</div>
+            <div class="receipt-merchant">Our Year in Cravings</div>
+            <div class="receipt-row"><span class="receipt-rank">#1</span><span class="receipt-item">Wingstop runs</span><span class="receipt-price">always</span></div>
+            <div class="receipt-row"><span class="receipt-rank">#2</span><span class="receipt-item">Homemade tacos</span><span class="receipt-price">pure comfort</span></div>
+            <div class="receipt-row"><span class="receipt-rank">#3</span><span class="receipt-item">Freshens smoothie</span><span class="receipt-price">first gift 🤍</span></div>
+            <div class="receipt-row"><span class="receipt-rank">#4</span><span class="receipt-item">Late night snacks</span><span class="receipt-price">2am ritual</span></div>
+            <div class="receipt-row"><span class="receipt-rank">#5</span><span class="receipt-item">Chick-fil-A for you</span><span class="receipt-price">just because</span></div>
+            <div class="receipt-total">Total: one really good year 🤍</div>
+          </div>
+          <div class="receipt-tear"></div>
         </div>
       </div>
     </section>
 
-    <section class="card card-13" data-i="12" id="c12">
+    <section class="card card-env" data-i="12" id="c12">
+      <div class="inner">
+        <p class="tag">For when you need it</p>
+        <h2 class="h-lg" style="font-size:clamp(1.35rem,5.8vw,1.9rem);">Open when…</h2>
+        <p class="sub" style="margin-bottom:0.65rem;">tap each one. I wrote these for you.</p>
+        <div class="envelopes-wrap" id="envWrap">
+          <div class="env-item" id="envItem0">
+            <div class="env-box" id="env0">
+              <div class="env-flap" aria-hidden="true"></div>
+              <div class="env-tape" aria-hidden="true"></div>
+              <div class="env-label">Open when you miss me 🤍</div>
+              <div class="env-note">I'm never far. I think about you more than you know. Text me.</div>
+            </div>
+          </div>
+          <div class="env-item" id="envItem1">
+            <div class="env-box" id="env1">
+              <div class="env-flap" aria-hidden="true"></div>
+              <div class="env-tape" aria-hidden="true"></div>
+              <div class="env-label">Open when life feels heavy</div>
+              <div class="env-note">You've carried so much. I see it. I'm proud of you every single day.</div>
+            </div>
+          </div>
+          <div class="env-item" id="envItem2">
+            <div class="env-box" id="env2">
+              <div class="env-flap" aria-hidden="true"></div>
+              <div class="env-tape" aria-hidden="true"></div>
+              <div class="env-label">Open when you need proof</div>
+              <div class="env-note">730,204 words. 106,124 messages. That's how much I mean it.</div>
+            </div>
+          </div>
+        </div>
+        <p class="env-all-hint" id="envHint">open all three to continue</p>
+      </div>
+    </section>
+
+    <section class="card card-13" data-i="13" id="c13">
       <div class="inner">
         <p class="tag">My love letter to you</p>
         <h2 class="h-lg" style="font-size:clamp(1.3rem,5.2vw,1.7rem);">the holy grail.</h2>
@@ -1045,7 +1269,7 @@
       </div>
     </section>
 
-    <section class="card card-14" data-i="13" id="c13">
+    <section class="card card-14" data-i="14" id="c14">
       <div class="inner ring-stage">
         <p class="tag">A promise</p>
         <h2 class="h-lg">Open the box.</h2>
@@ -1087,7 +1311,7 @@
       </div>
     </section>
 
-    <section class="card card-15" data-i="14" id="c14">
+    <section class="card card-15" data-i="15" id="c15">
       <div class="inner">
         <p class="tag">Our story</p>
         <h2 class="h-lg" style="font-size:clamp(1.35rem,5.2vw,1.8rem);">Your Year, Wrapped 🤍</h2>
@@ -1136,12 +1360,13 @@
 
   <script>
     const STORY = {
-      totalCards: 15,
-      letterIdx: 12,
-      ringIdx: 13,
-      encoreIdx: 14,
+      totalCards: 16,
+      letterIdx: 13,
+      ringIdx: 14,
+      encoreIdx: 15,
+      envIdx: 12,
       anniversary: new Date("2026-09-28T00:00:00"),
-      durations: [5500, 4000, 4000, 4000, 4500, 5000, 5000, 4000, 5500, 5500, 5000, 4500, 9000, 12000, 0],
+      durations: [5500, 4000, 4000, 4000, 5500, 5000, 5000, 4000, 5500, 5500, 5000, 5000, 0, 9000, 12000, 0],
       pauseAfterManualMs: 5000,
       stats: { words: 730204, messages: 106124, herShare: 63.5, youShare: 36.5 }
     };
@@ -1173,6 +1398,7 @@
       const countTokens = new WeakMap();
       const vocabWords = ["Perhaps.", "Goodnight beaner :)", "TF DOES KITH MEAN"];
       let vocabTimer = null;
+      let envOpenedCount = 0;
 
       for (let i = 0; i < STORY.totalCards; i++) {
         const b = document.createElement("div");
@@ -1360,6 +1586,12 @@
           document.querySelector(".card-3 .stat-punch")?.classList.remove("stat-flash");
         }
         if (cardIndex === 4) stopVocabFlash();
+        if (cardIndex === STORY.envIdx) {
+          envOpenedCount = 0;
+          document.querySelectorAll(".env-item").forEach(e => e.classList.remove("opened"));
+          const h = document.getElementById("envHint");
+          if (h) { h.textContent = "open all three to continue"; h.style.opacity = ""; }
+        }
         if (cardIndex === STORY.ringIdx) resetRing();
       }
 
@@ -1373,9 +1605,47 @@
             });
           }, 180);
         }
-        if (cardIndex === 4) startVocabFlash();
         if (cardIndex === STORY.ringIdx) resetRing();
       }
+
+      /* ── Envelope Bridge Card ── */
+      document.querySelectorAll(".env-box").forEach(box => {
+        function openEnv(e) {
+          e.stopPropagation();
+          const item = box.closest(".env-item");
+          if (item.classList.contains("opened")) return;
+          item.classList.add("opened");
+          envOpenedCount++;
+          const hint = document.getElementById("envHint");
+          if (envOpenedCount >= 3) {
+            if (hint) { hint.textContent = "tap to keep going →"; hint.style.opacity = "0.7"; }
+            document.body.classList.remove("env-mode");
+          } else {
+            if (hint) hint.textContent = (3 - envOpenedCount) + " more to open";
+          }
+        }
+        box.addEventListener("click", openEnv);
+        box.addEventListener("touchend", (e) => { e.preventDefault(); openEnv(e); }, { passive: false });
+      });
+
+      /* ── Polaroid Hold-to-Reveal ── */
+      document.querySelectorAll(".scrapbook .polaroid").forEach(p => {
+        function startHold(e) {
+          if (idx !== 10) return;
+          e.stopPropagation();
+          p.classList.add("inspecting");
+        }
+        function endHold(e) {
+          e.stopPropagation();
+          p.classList.remove("inspecting");
+        }
+        p.addEventListener("touchstart", startHold, { passive: true });
+        p.addEventListener("touchend", endHold, { passive: false });
+        p.addEventListener("touchcancel", endHold, { passive: false });
+        p.addEventListener("mousedown", startHold);
+        p.addEventListener("mouseup", endHold);
+        p.addEventListener("mouseleave", endHold);
+      });
 
       function go(next, opts = {}) {
         const { auto = false } = opts;
@@ -1395,6 +1665,10 @@
         cards[idx].classList.add("on");
         paintBarsStatic();
         runCardAnimations(idx);
+        document.body.classList.toggle("scroll-mode", idx === STORY.letterIdx);
+        document.body.classList.toggle("ring-mode", idx === STORY.ringIdx && !ringRevealed);
+        /* env card: block right-tap navigation until all envelopes opened */
+        document.body.classList.toggle("env-mode", idx === STORY.envIdx && envOpenedCount < 3);
         if (!auto) pauseAutoplay(STORY.pauseAfterManualMs);
         else if (idx !== STORY.encoreIdx) scheduleAutoplay();
       }
