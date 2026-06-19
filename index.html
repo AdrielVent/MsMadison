@@ -9,39 +9,40 @@
   <title>MsMadison</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Drop promise-ring.glb in assets/ — model-viewer loads it on card 14 reveal -->
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <style>
     :root {
-      --bg: #ede8df;
-      --surface-1: #faf7f2;
-      --surface-2: #f5f1ea;
-      --paper: #faf7f2;
-      --container: #f5f1ea;
-      --ink: #1b3b6f;
-      --navy: #1b3b6f;
-      --cream: #1b3b6f;
+      --bg: #FAF7F0;
+      --surface-1: #FAF7F0;
+      --surface-2: #FAF7F0;
+      --paper: #FAF7F0;
+      --container: #FAF7F0;
+      --ink: #2A2421;
+      --navy: #1b2f48;
+      --cream: #FAF7F0;
       --secondary: #4a6d8c;
       --sand: #5a7f9a;
       --muted: rgba(27, 59, 111, 0.52);
       --blue: #7fa9d4;
       --cyan: #7a9e9a;
-      --sage: #7d9689;
-      --crimson: #c45c4a;
+      --sage: #92A8A4;
+      --crimson: #d49a8f;
       --pink: #8a6f8a;
       --velvet: #d4b5bc;
       --glow: rgba(127, 169, 212, 0.15);
       --crimson-glow: rgba(196, 92, 74, 0.15);
       --border: rgba(27, 59, 111, 0.14);
-      --line: rgba(27, 59, 111, 0.06);
-      --shadow: 0 8px 28px rgba(27, 59, 111, 0.08);
-      --shadow-soft: 0 2px 14px rgba(27, 59, 111, 0.06);
+      --line: rgba(42, 36, 33, 0.08);
+      --shadow: 0 14px 34px rgba(42, 36, 33, 0.16);
+      --shadow-soft: 0 6px 20px rgba(42, 36, 33, 0.12);
       --safe-t: env(safe-area-inset-top, 0px);
       --safe-b: env(safe-area-inset-bottom, 0px);
-      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
       --serif: "Cormorant Garamond", Georgia, serif;
       --sans: "DM Sans", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
       /* Photo album — set to url('path.jpg') when assets are ready */
       --album-1: none;
       --album-2: none;
@@ -57,6 +58,13 @@
       height: 100dvh;
       overflow: hidden;
     }
+    
+    body::after {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1000;
+      background: radial-gradient(circle at center, transparent 30%, rgba(42, 36, 33, 0.08) 100%);
+      mix-blend-mode: multiply;
+    }
+
     body {
       font-family: var(--sans);
       background:
@@ -100,7 +108,7 @@
     .bar.future { opacity: 0.28; }
     .counter {
       margin-top: 0.4rem; text-align: center;
-      font-family: var(--sans); font-size: 0.52rem;
+      font-family: var(--mono); font-size: 0.52rem;
       letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
     }
 
@@ -114,6 +122,10 @@
     body.scroll-mode .tap-l, body.scroll-mode .tap-r,
     body.ring-mode .tap-l, body.ring-mode .tap-r { width: 14%; }
     body.scroll-mode .tap-pass { width: 72%; pointer-events: none; }
+
+    body.interact-mode .tap-l, body.interact-mode .tap-r { width: 10%; z-index: 260; }
+    body.interact-mode .tap-pass { width: 80%; pointer-events: none; }
+
     /* Center must pass through to the card — fixed z-index can't beat .taps while .card has transform */
     body.ring-mode .taps { pointer-events: none; }
     body.ring-mode .tap-l,
@@ -153,10 +165,15 @@
       width: min(100%, 23.5rem); position: relative;
       transform: translate3d(0, 0, 0);
     }
+    
+    /* Scrapbook Rotation & Offset */
+    .card:nth-child(even) .inner { --tx: 5px; --ty: 3px; --rot: 0.8deg; transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--rot)); }
+    .card:nth-child(odd) .inner { --tx: -4px; --ty: -2px; --rot: -0.7deg; transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--rot)); }
     .card.on .inner { animation: rise 0.36s var(--ease) both; }
+
     @keyframes rise {
       from { opacity: 0; transform: translate3d(0, 14px, 0); }
-      to { opacity: 1; transform: translate3d(0, 0, 0); }
+      to { opacity: 1; transform: translate3d(var(--tx, 0), var(--ty, 0), 0) rotate(var(--rot, 0deg)); }
     }
     .card.on .tag { animation: revealIn 0.42s var(--ease) 0.06s both; }
     .card.on .h-xl, .card.on .h-lg { animation: revealIn 0.48s var(--ease) 0.14s both; }
@@ -167,11 +184,11 @@
     .card.on .stat-lbl, .card.on .eq-deco, .card.on .stickers, .card.on .night-meta { animation: revealIn 0.4s var(--ease) 0.38s both; }
     @keyframes revealIn {
       from { opacity: 0; transform: translate3d(0, 12px, 0); }
-      to { opacity: 1; transform: translate3d(0, 0, 0); }
+      to { opacity: 1; transform: translate3d(var(--tx, 0), var(--ty, 0), 0) rotate(var(--rot, 0deg)); }
     }
 
     .tag {
-      font-family: var(--sans); font-size: 0.52rem; letter-spacing: 0.22em;
+      font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.22em;
       text-transform: uppercase; color: var(--blue); margin-bottom: 0.55rem;
     }
     .h-xl, .h-lg { font-family: var(--serif); font-weight: 600; color: var(--navy); }
@@ -185,13 +202,24 @@
     }
     .sub {
       font-family: var(--serif); font-size: clamp(0.95rem, 3.5vw, 1.08rem);
-      font-style: italic; color: var(--secondary); margin-top: 0.5rem; line-height: 1.45;
+       color: var(--secondary); margin-top: 0.5rem; line-height: 1.45;
     }
+
+    
+    
+
+    
+    .zine::before, .receipt::before, .lib-pocket::before, .scrapbook::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0;
+      height: 14px; background: rgba(242, 235, 222, 0.65);
+      z-index: 10; pointer-events: none;
+    }
+    .scrapbook { position: relative; padding-top: 14px; }
 
     .zine {
       background: var(--paper);
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
+      box-shadow: 0 16px 36px rgba(42, 36, 33, 0.16);
       padding: 1.15rem 1rem;
       position: relative; border-radius: 1px;
     }
@@ -207,7 +235,7 @@
     }
 
     .num {
-      font-family: var(--sans); font-size: clamp(2.5rem, 13vw, 4rem);
+      font-family: var(--mono); font-size: clamp(2.5rem, 13vw, 4rem);
       font-weight: 600; line-height: 1; letter-spacing: -0.03em; color: var(--navy);
     }
     .num.stat-landed { animation: statPop 0.45s var(--ease); color: var(--blue); }
@@ -217,7 +245,7 @@
       100% { transform: scale(1); }
     }
     .stat-lbl {
-      font-family: var(--sans); font-size: 0.55rem; letter-spacing: 0.14em;
+      font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--muted);
     }
     .stat-punch {
@@ -263,15 +291,15 @@
       padding: 0.45rem 0.2rem; text-align: center;
     }
     .cd-n {
-      font-family: var(--sans); font-size: clamp(0.95rem, 4vw, 1.2rem);
+      font-family: var(--mono); font-size: clamp(0.95rem, 4vw, 1.2rem);
       font-weight: 600; color: var(--navy); font-variant-numeric: tabular-nums;
     }
     .cd-l {
-      font-family: var(--sans); font-size: 0.4rem; letter-spacing: 0.12em;
+      font-family: var(--mono); font-size: 0.4rem; letter-spacing: 0.12em;
       text-transform: uppercase; color: var(--muted); margin-top: 0.15rem;
     }
     .celebrate {
-      font-family: var(--serif); font-size: 1.15rem; font-style: italic;
+      font-family: var(--serif); font-size: 1.15rem; 
       color: var(--pink); text-align: center; padding: 0.5rem 0;
     }
 
@@ -297,14 +325,14 @@
     .eq-her {
       width: 0; background: linear-gradient(90deg, var(--cyan), var(--blue));
       color: var(--bg); display: flex; align-items: center; justify-content: center;
-      font-family: var(--sans); font-size: 0.65rem; font-weight: 600;
+      font-family: var(--mono); font-size: 0.65rem; font-weight: 600;
       transition: width 1.1s var(--ease);
     }
     .card-4.on .eq-her { width: 63.5%; }
     .eq-you {
       flex: 1; background: var(--container); color: var(--secondary);
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--sans); font-size: 0.65rem; font-weight: 600;
+      font-family: var(--mono); font-size: 0.65rem; font-weight: 600;
     }
     .eq-deco {
       display: flex; align-items: flex-end; justify-content: center;
@@ -334,12 +362,12 @@
     }
     .vocab-n { font-family: var(--sans); font-size: clamp(1rem, 4.2vw, 1.25rem); font-weight: 600; color: var(--blue); }
     .vocab-l {
-      font-family: var(--sans); font-size: 0.4rem; letter-spacing: 0.1em;
+      font-family: var(--mono); font-size: 0.4rem; letter-spacing: 0.1em;
       text-transform: uppercase; color: var(--muted); margin-top: 0.18rem;
     }
     .vocab-flash {
       margin-top: 0.8rem; text-align: center;
-      font-family: var(--serif); font-style: italic; font-size: 0.95rem; color: var(--pink);
+      font-family: var(--serif);  font-size: 0.95rem; color: var(--pink);
       min-height: 1.4em;
     }
 
@@ -356,7 +384,7 @@
     }
     .cass-lbl {
       background: transparent; border: 1px solid var(--border);
-      font-family: var(--sans); font-size: 0.48rem; letter-spacing: 0.08em;
+      font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.08em;
       text-align: center; padding: 0.4rem; margin-bottom: 0.5rem; color: var(--secondary);
     }
     .cass-reels { display: flex; justify-content: space-between; padding: 0 0.35rem; }
@@ -372,7 +400,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .stickers { display: flex; gap: 0.35rem; margin-top: 0.6rem; flex-wrap: wrap; }
     .sticker {
-      font-family: var(--sans); font-size: 0.46rem; letter-spacing: 0.06em;
+      font-family: var(--mono); font-size: 0.46rem; letter-spacing: 0.06em;
       border: 1px solid var(--border); padding: 0.2rem 0.38rem;
       background: rgba(125, 150, 137, 0.1); color: var(--secondary);
     }
@@ -380,7 +408,7 @@
     /* Quotes */
     .quote-hero {
       font-family: var(--serif); font-size: clamp(1.1rem, 4.6vw, 1.4rem);
-      font-style: italic; line-height: 1.55;
+       line-height: 1.55;
       border-left: 2px solid var(--crimson);
       padding-left: 0.8rem; margin-top: 0.75rem; color: var(--navy);
     }
@@ -408,11 +436,11 @@
     }
     .night-q {
       font-family: var(--serif); font-size: clamp(1rem, 4vw, 1.18rem);
-      font-style: italic; line-height: 1.6; color: var(--navy);
+       line-height: 1.6; color: var(--navy);
       border-left: 2px solid var(--blue); padding-left: 0.8rem; margin-top: 0.7rem;
     }
     .night-meta {
-      font-family: var(--sans); font-size: 0.5rem; letter-spacing: 0.12em;
+      font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.12em;
       color: var(--muted); margin-top: 0.7rem; text-transform: uppercase;
     }
     .context-note {
@@ -488,7 +516,7 @@
     .polaroid span {
       position: relative; z-index: 1;
       font-family: var(--sans); font-size: 0.4rem; letter-spacing: 0.09em;
-      text-transform: uppercase; color: var(--secondary); text-align: center;
+      text-transform: uppercase; color: var(--navy); text-align: center; font-family: var(--mono); text-transform: lowercase;
       text-shadow: none;
     }
     .p1 { --rot: -8deg; --lift: 2px; --photo: var(--album-1); grid-column: 1 / 3; grid-row: 1 / 3; z-index: 2; }
@@ -510,7 +538,7 @@
     .card-13 .zine { flex: 1; min-height: 0; display: flex; flex-direction: column; }
     .scroll-box {
       flex: 1; min-height: 0; max-height: min(46dvh, 18rem);
-      overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y;
+      overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior-y: contain;
       margin-top: 0.6rem; padding-right: 0.35rem;
       font-family: var(--serif); font-size: 0.88rem; font-style: italic; line-height: 1.62;
       user-select: text; position: relative; z-index: 280; pointer-events: auto; color: var(--ink);
@@ -520,7 +548,7 @@
     .scroll-box p { margin-bottom: 0.65rem; }
     .scroll-box .hl { color: var(--pink); font-weight: 600; font-style: normal; }
     .liner-head {
-      font-family: var(--sans); font-size: 0.5rem; letter-spacing: 0.14em;
+      font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.14em;
       text-transform: uppercase; padding-bottom: 0.4rem;
       border-bottom: 1px solid var(--border); margin-bottom: 0.4rem; color: var(--sand);
     }
@@ -678,7 +706,7 @@
       50% { transform: translate3d(0, -6px, 0); }
     }
     .ring-unlock {
-      font-family: var(--sans); font-size: 0.58rem; letter-spacing: 0.16em;
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.16em;
       text-transform: uppercase; color: var(--crimson);
       text-shadow: none;
     }
@@ -687,7 +715,7 @@
       margin: 0.35rem 0; color: var(--navy);
     }
     .ring-subline {
-      font-family: var(--serif); font-style: italic; font-size: 0.92rem; color: var(--pink);
+      font-family: var(--serif);  font-size: 0.92rem; color: var(--pink);
     }
 
     /* Encore */
@@ -707,14 +735,14 @@
       background: var(--paper);
     }
     .screenshot-cue {
-      font-family: var(--sans); font-size: 0.48rem; letter-spacing: 0.16em;
+      font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.16em;
       text-transform: uppercase; text-align: center; color: var(--sand);
       margin-bottom: 0.5rem; padding: 0.35rem 0.5rem;
       border: 1px dashed var(--border);
       background: rgba(125, 150, 137, 0.08);
     }
     .share-badge {
-      font-family: var(--sans); font-size: 0.46rem; letter-spacing: 0.18em;
+      font-family: var(--mono); font-size: 0.46rem; letter-spacing: 0.18em;
       text-transform: uppercase; text-align: center;
       padding: 0.4rem 0.5rem; margin: -1.15rem -1rem 0.65rem;
       background: var(--sage);
@@ -730,14 +758,14 @@
       background: rgba(125, 150, 137, 0.1);
       padding: 0.65rem 0.45rem;
     }
-    .cv { font-family: var(--sans); font-size: 0.88rem; font-weight: 600; color: var(--navy); }
+    .cv { font-family: var(--mono); font-size: 0.88rem; font-weight: 600; color: var(--navy); }
     .cell.hero-stat .cv { font-size: clamp(0.95rem, 4vw, 1.1rem); }
     .cl {
-      font-family: var(--sans); font-size: 0.46rem; letter-spacing: 0.1em;
+      font-family: var(--mono); font-size: 0.46rem; letter-spacing: 0.1em;
       text-transform: uppercase; color: var(--muted); margin-top: 0.12rem;
     }
     .summary {
-      text-align: center; font-family: var(--serif); font-style: italic;
+      text-align: center; font-family: var(--serif); 
       font-size: 0.95rem; color: var(--pink); margin-bottom: 0.55rem; line-height: 1.4;
     }
     .hint {
@@ -824,7 +852,10 @@
     }
     @media (max-width: 380px) {
       .inner { width: min(100%, 21.5rem); }
-      .zine { padding: 0.95rem 0.85rem; }
+      
+    
+
+    .zine { padding: 0.95rem 0.85rem; }
       .quote-hero.lg { font-size: clamp(1.05rem, 4.6vw, 1.4rem); }
       .h-lg { font-size: clamp(1.4rem, 6.8vw, 1.95rem); }
     }
@@ -858,13 +889,13 @@
     }
     .card.on .lib-card { transform: translateY(0); }
     .lib-header {
-      font-family: var(--sans); font-size: 0.4rem; letter-spacing: 0.18em;
+      font-family: var(--mono); font-size: 0.4rem; letter-spacing: 0.18em;
       text-transform: uppercase; color: var(--muted);
       border-bottom: 1px solid var(--border); padding-bottom: 0.28rem; margin-bottom: 0.45rem;
     }
     .lib-title {
       font-family: var(--serif); font-size: clamp(0.88rem,3.8vw,1.05rem);
-      font-weight: 600; font-style: italic; color: var(--navy);
+      font-weight: 600;  color: var(--navy);
       margin-bottom: 0.4rem; line-height: 1.25;
     }
     .lib-traits { list-style: none; display: flex; flex-direction: column; gap: 0.2rem; }
@@ -875,13 +906,13 @@
     .lib-traits li::before { content: "✓"; color: var(--sage); flex-shrink: 0; }
     .lib-stamps { display: flex; gap: 0.3rem; margin-top: 0.45rem; flex-wrap: wrap; }
     .lib-stamp {
-      font-family: var(--sans); font-size: 0.37rem; letter-spacing: 0.1em;
+      font-family: var(--mono); font-size: 0.37rem; letter-spacing: 0.1em;
       text-transform: uppercase; border: 1.5px solid var(--sage); color: var(--sage);
       padding: 0.15rem 0.28rem; border-radius: 1px;
     }
     .lib-pocket-label {
       position: absolute; bottom: 0.4rem; left: 0; right: 0; text-align: center; z-index: 2;
-      font-family: var(--sans); font-size: 0.37rem; letter-spacing: 0.12em;
+      font-family: var(--mono); font-size: 0.37rem; letter-spacing: 0.12em;
       text-transform: uppercase; color: var(--muted);
     }
 
@@ -896,7 +927,7 @@
     }
     .card.on .receipt { max-height: 28rem; }
     .receipt-top {
-      font-family: var(--sans); font-size: 0.38rem; letter-spacing: 0.16em;
+      font-family: var(--mono); font-size: 0.38rem; letter-spacing: 0.16em;
       text-transform: uppercase; text-align: center; color: var(--muted);
       border-bottom: 1px dashed var(--border); padding-bottom: 0.4rem; margin-bottom: 0.5rem;
     }
@@ -909,7 +940,7 @@
       padding: 0.26rem 0; border-bottom: 1px dotted rgba(27,59,111,0.1); gap: 0.4rem;
     }
     .receipt-rank {
-      font-family: var(--sans); font-size: 0.41rem; letter-spacing: 0.08em;
+      font-family: var(--mono); font-size: 0.41rem; letter-spacing: 0.08em;
       color: var(--sage); flex-shrink: 0; min-width: 1.1rem;
     }
     .receipt-item {
@@ -923,39 +954,47 @@
     .receipt-total {
       margin-top: 0.4rem; border-top: 2px solid rgba(27,59,111,0.18);
       padding: 0.32rem 0 0.55rem;
-      font-family: var(--serif); font-style: italic; font-size: 0.8rem;
+      font-family: var(--serif);  font-size: 0.8rem;
       text-align: center; color: var(--pink);
     }
     .receipt-tear {
-      width: 100%; height: 14px; flex-shrink: 0;
-      background:
-        linear-gradient(135deg, var(--bg) 33.33%, transparent 33.33%) 0 0,
-        linear-gradient(225deg, var(--bg) 33.33%, transparent 33.33%) 0 0;
-      background-color: var(--paper);
-      background-size: 10px 14px; background-repeat: repeat-x;
+      width: 100%; height: 12px; flex-shrink: 0;
+      background: var(--paper);
+      mask-image: radial-gradient(circle at 5px 12px, transparent 6px, black 6.5px);
+      mask-size: 10px 12px;
+      mask-position: bottom;
+      -webkit-mask-image: radial-gradient(circle at 5px 12px, transparent 6px, black 6.5px);
+      -webkit-mask-size: 10px 12px;
+      -webkit-mask-position: bottom;
       margin-top: -1px;
     }
 
     /* ─── OPEN WHEN ENVELOPES (Bridge Card) ─── */
     .envelopes-wrap { margin-top: 0.9rem; display: flex; flex-direction: column; gap: 0.7rem; }
+    .card.on .env-item:nth-child(1) { animation: revealIn 0.4s steps(5, end) 0.1s both; }
+    .card.on .env-item:nth-child(2) { animation: revealIn 0.4s steps(5, end) 0.2s both; }
+    .card.on .env-item:nth-child(3) { animation: revealIn 0.4s steps(5, end) 0.3s both; }
     .env-item { position: relative; }
     .env-box {
       position: relative; width: 100%; min-height: 3.6rem;
       background: var(--paper); border: 1.5px solid rgba(27,59,111,0.18);
-      box-shadow: var(--shadow-soft); cursor: pointer; overflow: hidden;
+      box-shadow: var(--shadow-soft); cursor: pointer;
       border-radius: 1px; -webkit-tap-highlight-color: transparent;
     }
     .env-flap {
-      position: absolute; top: 0; left: 0; right: 0; height: 0;
-      border-left: 50vw solid transparent; border-right: 50vw solid transparent;
-      border-top: 1.35rem solid rgba(146,168,164,0.5);
+      position: absolute; top: -1px; left: -1px; right: -1px; height: 1.35rem;
+      background: var(--paper); border: 1.5px solid rgba(27,59,111,0.18);
+      border-bottom: 1.5px solid rgba(146,168,164,0.6);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
       transform-origin: top center;
-      transition: transform 0.45s cubic-bezier(0.25,1,0.5,1); z-index: 3; pointer-events: none;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 3; pointer-events: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
-    .env-item.opened .env-flap { transform: rotateX(180deg); }
+    .env-item.opened .env-flap { transform: rotateX(-180deg); opacity: 0; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s 0.2s; }
+    .env-box { overflow: visible !important; }
     .env-label {
       position: absolute; top: 1.4rem; left: 0; right: 0; text-align: center;
-      font-family: var(--serif); font-style: italic;
+      font-family: var(--serif); 
       font-size: clamp(0.72rem,3vw,0.86rem); color: var(--navy);
       padding: 0.25rem 0.65rem; z-index: 2; pointer-events: none;
       transition: opacity 0.2s;
@@ -963,7 +1002,7 @@
     .env-note {
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
       padding: 0.5rem 0.8rem; background: var(--container);
-      font-family: var(--serif); font-style: italic;
+      font-family: var(--serif); 
       font-size: clamp(0.66rem,2.8vw,0.8rem); color: var(--secondary);
       text-align: center; line-height: 1.45; opacity: 0;
       transform: translateY(6px);
@@ -972,6 +1011,7 @@
     }
     .env-item.opened .env-label { opacity: 0; }
     .env-item.opened .env-note { opacity: 1; transform: translateY(0); }
+    .env-item.opened .env-tape { opacity: 0; transition: opacity 0.2s; }
     .env-tape {
       position: absolute; top: -3px; left: 50%; transform: translateX(-50%) rotate(-1.2deg);
       width: 2rem; height: 0.5rem; background: rgba(146,168,164,0.4);
@@ -979,7 +1019,7 @@
     }
     .env-all-hint {
       text-align: center; margin-top: 0.35rem;
-      font-family: var(--sans); font-size: 0.42rem; letter-spacing: 0.14em;
+      font-family: var(--mono); font-size: 0.42rem; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--muted);
     }
     /* block tap navigation while env card active and not all opened */
@@ -988,21 +1028,27 @@
     /* ─── POLAROID HOLD-TO-REVEAL (Card 11) ─── */
     .polaroid.inspecting {
       z-index: 10 !important;
-      transform: translate3d(0, calc(var(--lift) - 5px), 0) rotate(calc(var(--rot) * 0.35)) scale(1.1) !important;
+      transform: translate3d(0, -6px, 0) scale(1.03) rotate(var(--wobble, 0deg)) !important;
       box-shadow: 0 14px 36px rgba(27,59,111,0.2) !important;
-      transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease);
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .polaroid-note {
       position: absolute; inset: 0; background: var(--container);
       display: flex; align-items: center; justify-content: center;
-      padding: 0.3rem; opacity: 0;
+      padding: 0.5rem; background: var(--paper); opacity: 0;
       transition: opacity 0.2s ease 0.1s;
       pointer-events: none; border-radius: 1px; z-index: 2;
     }
     .polaroid.inspecting .polaroid-note { opacity: 1; }
+    
+    .polaroid-note .tape-strip {
+      width: 40%; height: 10px; background: rgba(245, 240, 230, 0.8);
+      position: absolute; top: -5px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05); z-index: 10;
+    }
     .polaroid-note p {
       font-family: var(--serif); font-style: italic;
-      font-size: 0.44rem; line-height: 1.4; color: var(--secondary); text-align: center;
+      font-size: 0.44rem; line-height: 1.4; color: var(--navy); text-align: center; font-family: var(--mono); text-transform: lowercase;
     }
   </style>
 </head>
@@ -1028,7 +1074,7 @@
         <div class="zine zine-hero">
           <span class="tape">MADE FOR YOU</span>
           <h1 class="h-xl">Your First Year<br>Wrapped 🤍</h1>
-          <p class="sub">I made this for you because you changed everything for me.</p>
+          <p class="sub">I made this for you.</p>
           <p class="tag" style="margin-top:0.55rem;letter-spacing:0.14em;">09.28.25 → 09.28.26</p>
           <div id="cdWrap">
             <p class="tag" style="margin-top:0.85rem;">countdown to our year</p>
@@ -1047,7 +1093,7 @@
       <div class="inner">
         <p class="tag">Our first words</p>
         <h2 class="h-lg">It started with hello.</h2>
-        <p class="sub" style="margin-bottom:0.75rem;">I still replay the beginning for you.</p>
+        <p class="sub" style="margin-bottom:0.75rem;">I still replay the beginning.</p>
         <div class="zine">
           <p class="quote-hero">"Didn't know I was taking a baddie out"</p>
           <p class="night-meta">SOMETHING I SAID · SEP 10, 2025</p>
@@ -1069,7 +1115,7 @@
     <section class="card card-4" data-i="3" id="c3">
       <div class="inner">
         <p class="tag">Listening to you</p>
-        <h2 class="h-lg">You were the voice I kept wanting more of.</h2>
+        <h2 class="h-lg">You were the one I kept wanting more of.</h2>
         <div class="eq-wrap">
           <div class="eq-bar">
             <div class="eq-her">YOU 63.5%</div>
@@ -1089,7 +1135,7 @@
         <div class="lib-pocket-wrap">
           <div class="lib-pocket">
             <div class="lib-card">
-              <div class="lib-header">RELATIONSHIP CARD · ADRIEL &amp; ZOE · YEAR ONE</div>
+              <div class="lib-header">YEAR ONE · ADRIEL &amp; ZOE</div>
               <div class="lib-title">"The Stay-Up-Till-2AM Reassurers"</div>
               <ul class="lib-traits">
                 <li>Most likely to turn a bad day around</li>
@@ -1112,12 +1158,12 @@
 
     <section class="card card-6" data-i="5" id="c5">
       <div class="inner">
-        <p class="tag">Never getting tired of you</p>
-        <h2 class="h-lg" style="font-size:clamp(1.3rem,5.6vw,1.8rem);">This is how much of you I got to keep.</h2>
-        <p class="sub" style="margin-bottom:0.65rem;">106,124 messages and I'd read every single one again.</p>
+        <p class="tag">I never got tired of you</p>
+        <h2 class="h-lg" style="font-size:clamp(1.3rem,5.6vw,1.8rem);">This is how much we talked.</h2>
+        <p class="sub" style="margin-bottom:0.65rem;">106,124 messages and I'd read them all again.</p>
         <div class="cass-slide">
           <div class="cass">
-            <div class="cass-lbl">OUR TAPE · HEAVY ROTATION · ∞</div>
+            <div class="cass-lbl">SIDE A · SIDE B</div>
             <div class="cass-reels"><div class="reel"></div><div class="reel"></div></div>
           </div>
           <div class="stickers">
@@ -1131,7 +1177,7 @@
     <section class="card card-7" data-i="6" id="c6">
       <div class="inner">
         <p class="tag">The sweetest goodnight</p>
-        <h2 class="h-lg">I kept this because it mattered.</h2>
+        <h2 class="h-lg">I kept this.</h2>
         <div class="zine">
           <p class="night-q">"Goodnight my thing 1 :) I really enjoyed our date and I'll see you in the morning"</p>
           <p class="night-meta">SOMETHING I SAID · SEP 11, 2025</p>
@@ -1141,10 +1187,10 @@
 
     <section class="card card-8" data-i="7" id="c7">
       <div class="inner">
-        <p class="tag">Before I Said It</p>
-        <h2 class="h-lg">I wanted to take my time with you.</h2>
+        <p class="tag">Before I said it</p>
+        <h2 class="h-lg">I wanted to take my time.</h2>
         <div class="zine">
-          <p class="quote-hero">"I can't say I love you yet"</p>
+          <p class="quote-hero">"I can't say it yet"</p>
           <p class="night-meta">SOMETHING I SAID · SEP 18, 2025</p>
         </div>
       </div>
@@ -1164,7 +1210,7 @@
     <section class="card card-10 card-premium" data-i="9" id="c9">
       <div class="inner">
         <p class="tag">I Meant It Gently</p>
-        <h2 class="h-lg">I wanted to love you carefully, not rush you.</h2>
+        <h2 class="h-lg">I wanted to love you carefully.</h2>
         <div class="zine">
           <p class="quote-hero">"I didn't mean to make you feel bad or pressured to say it back… I respect that you want to say it when you fully mean it"</p>
           <p class="night-meta">SOMETHING I SAID · OCT 12, 2025</p>
@@ -1178,12 +1224,12 @@
         <h2 class="h-lg">Moments I saved for you.</h2>
         <p class="sub">hold a photo to see what I was thinking.</p>
         <div class="scrapbook" aria-label="Photo album">
-          <div class="polaroid p1"><div class="polaroid-note"><p>Our first date. I was so nervous but you made it easy.</p></div><span>first date</span></div>
-          <div class="polaroid p2"><div class="polaroid-note"><p>You looked so good. I stared too long.</p></div><span>mirror pic</span></div>
-          <div class="polaroid p3"><div class="polaroid-note"><p>Being stupid with you is my favorite thing.</p></div><span>us being stupid</span></div>
-          <div class="polaroid p4"><div class="polaroid-note"><p>I replay this one a lot.</p></div><span>favorite memory</span></div>
-          <div class="polaroid p5"><div class="polaroid-note"><p>You didn't know I was watching. You were perfect.</p></div><span>pretty moment</span></div>
-          <div class="polaroid p6"><div class="polaroid-note"><p>This one makes me smile every single time.</p></div><span>my favorite</span></div>
+          <div class="polaroid p1"><div class="polaroid-note"><div class="tape-strip"></div><p>our first date. i was so nervous but you made it easy.</p></div><span>first date</span></div>
+          <div class="polaroid p2"><div class="polaroid-note"><div class="tape-strip"></div><p>you looked so good. i stared too long.</p></div><span>mirror pic</span></div>
+          <div class="polaroid p3"><div class="polaroid-note"><div class="tape-strip"></div><p>being stupid with you is my favorite thing.</p></div><span>us being stupid</span></div>
+          <div class="polaroid p4"><div class="polaroid-note"><div class="tape-strip"></div><p>i replay this one a lot.</p></div><span>favorite memory</span></div>
+          <div class="polaroid p5"><div class="polaroid-note"><div class="tape-strip"></div><p>you didn't know i was watching. you were perfect.</p></div><span>pretty moment</span></div>
+          <div class="polaroid p6"><div class="polaroid-note"><div class="tape-strip"></div><p>this one makes me smile every single time.</p></div><span>my favorite</span></div>
         </div>
       </div>
     </section>
@@ -1246,11 +1292,11 @@
 
     <section class="card card-13" data-i="13" id="c13">
       <div class="inner">
-        <p class="tag">My love letter to you</p>
-        <h2 class="h-lg" style="font-size:clamp(1.3rem,5.2vw,1.7rem);">the holy grail.</h2>
+        <p class="tag">Oct 30, 2025</p>
+        <h2 class="h-lg" style="font-size:clamp(1.3rem,5.2vw,1.7rem);">My love letter to you.</h2>
         <p class="sub" style="margin-bottom:0.65rem;">I wrote this for you.</p>
         <div class="zine">
-          <div class="liner-head">WHAT I WROTE · OCT 30, 2025 · FOR YOU 🤍</div>
+          <div class="liner-head">WHAT I WROTE · OCT 30, 2025 · FOR YOU</div>
           <div class="scroll-box" id="oct30Letter">
 <p><strong class="hl">You are everything I ask for.</strong> I'll even tell you, <strong class="hl">I pray for someone to be weird as me</strong>, and artist like me, <strong class="hl">loves being themselves like me</strong>.</p>
 <p>Your eyes make me feel emotions and you’ve seen it multiple times. <strong class="hl">I cried for someone like you</strong>, I want to cry in your arms. <strong class="hl">When you get me CFA</strong>, when you make me gifts WHEN YOU DO YHE MOST LITERALLY LITTEST THINGS , <strong class="hl">I appreciate the mini details</strong>.</p>
@@ -1273,7 +1319,7 @@
       <div class="inner ring-stage">
         <p class="tag">A promise</p>
         <h2 class="h-lg">Open the box.</h2>
-        <p class="sub ring-sub">one more thing I've been keeping for you</p>
+        <p class="sub ring-sub">one more thing.</p>
         <div class="ring-reveal-wrap" id="ringWrap">
           <button type="button" class="mystery-box" id="ringBox" aria-label="Open the box">
             <span class="box-shine" aria-hidden="true"></span>
@@ -1313,12 +1359,12 @@
 
     <section class="card card-15" data-i="15" id="c15">
       <div class="inner">
-        <p class="tag">Our story</p>
+        <p class="tag">OUR YEAR, ARCHIVED</p>
         <h2 class="h-lg" style="font-size:clamp(1.35rem,5.2vw,1.8rem);">Your Year, Wrapped 🤍</h2>
         <div class="zine share-frame">
           <p class="screenshot-cue">save this one for us 🤍</p>
           <div class="share-badge">OUR YEAR ONE · MADE FOR YOU 🤍</div>
-          <p class="summary">Thank you for letting me love you like this. Here's our year.</p>
+          <p class="summary">Thank you. Here's our year.</p>
           <div class="share-grid">
             <div class="cell w hero-stat"><div class="cv">730,204</div><div class="cl">words of us</div></div>
             <div class="cell"><div class="cv">106,124</div><div class="cl">messages</div></div>
@@ -1448,6 +1494,8 @@
         else hint.textContent = "tap right to keep going";
         document.body.classList.toggle("scroll-mode", idx === STORY.letterIdx);
         document.body.classList.toggle("ring-mode", idx === STORY.ringIdx && !ringRevealed);
+        const interactCards = [4, 10, 11, 12, 13, 14, 15];
+        document.body.classList.toggle("interact-mode", interactCards.includes(idx));
         barsRoot.setAttribute("aria-valuenow", idx + 1);
         syncEditTools();
       }
@@ -1613,38 +1661,50 @@
         function openEnv(e) {
           e.stopPropagation();
           const item = box.closest(".env-item");
-          if (item.classList.contains("opened")) return;
-          item.classList.add("opened");
-          envOpenedCount++;
+          if (item.classList.contains("opened")) {
+            item.classList.remove("opened");
+          } else {
+            item.classList.add("opened");
+          }
+          const totalOpened = document.querySelectorAll(".env-item.opened").length;
           const hint = document.getElementById("envHint");
-          if (envOpenedCount >= 3) {
-            if (hint) { hint.textContent = "tap to keep going →"; hint.style.opacity = "0.7"; }
+          if (totalOpened >= 3) {
+            if (hint) { hint.textContent = "tap right to keep going →"; hint.style.opacity = "0.7"; }
             document.body.classList.remove("env-mode");
           } else {
-            if (hint) hint.textContent = (3 - envOpenedCount) + " more to open";
+            if (hint) { hint.textContent = (3 - totalOpened) + " more to open"; hint.style.opacity = ""; }
+            document.body.classList.add("env-mode");
           }
         }
         box.addEventListener("click", openEnv);
+        box.addEventListener("touchstart", (e) => { e.stopPropagation(); });
         box.addEventListener("touchend", (e) => { e.preventDefault(); openEnv(e); }, { passive: false });
       });
 
       /* ── Polaroid Hold-to-Reveal ── */
       document.querySelectorAll(".scrapbook .polaroid").forEach(p => {
+        let holdTimer;
         function startHold(e) {
-          if (idx !== 10) return;
           e.stopPropagation();
-          p.classList.add("inspecting");
+          holdTimer = setTimeout(() => {
+            p.classList.add("inspecting");
+            // Add a tiny random wobble to feel physical
+            const wobble = (Math.random() - 0.5) * 4;
+            p.style.setProperty('--wobble', wobble + 'deg');
+          }, 350);
         }
         function endHold(e) {
           e.stopPropagation();
+          clearTimeout(holdTimer);
           p.classList.remove("inspecting");
+          setTimeout(() => p.style.removeProperty('--wobble'), 200);
         }
         p.addEventListener("touchstart", startHold, { passive: true });
         p.addEventListener("touchend", endHold, { passive: false });
         p.addEventListener("touchcancel", endHold, { passive: false });
-        p.addEventListener("mousedown", startHold);
-        p.addEventListener("mouseup", endHold);
-        p.addEventListener("mouseleave", endHold);
+        p.addEventListener("pointerdown", startHold);
+        p.addEventListener("pointerup", endHold);
+        p.addEventListener("pointerleave", endHold);
       });
 
       function go(next, opts = {}) {
@@ -1667,6 +1727,8 @@
         runCardAnimations(idx);
         document.body.classList.toggle("scroll-mode", idx === STORY.letterIdx);
         document.body.classList.toggle("ring-mode", idx === STORY.ringIdx && !ringRevealed);
+        const interactCards = [4, 10, 11, 12, 13, 14, 15];
+        document.body.classList.toggle("interact-mode", interactCards.includes(idx));
         /* env card: block right-tap navigation until all envelopes opened */
         document.body.classList.toggle("env-mode", idx === STORY.envIdx && envOpenedCount < 3);
         if (!auto) pauseAutoplay(STORY.pauseAfterManualMs);
